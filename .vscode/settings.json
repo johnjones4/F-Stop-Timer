@@ -13,6 +13,8 @@
     "limits": "cpp",
     "new": "cpp",
     "cmath": "cpp",
-    "tuple": "cpp"
+    "tuple": "cpp",
+    "arduino.h": "c",
+    "math.h": "c"
   }
 }

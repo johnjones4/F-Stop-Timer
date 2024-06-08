@@ -1,5 +1,4 @@
-#include <TimeScaler.h>
-#include <Arduino.h>
+#include <timescale.h>
 #include <math.h>
 
 int generateTimes(double *times, int nTimes, double baseTime, double stopDelta)

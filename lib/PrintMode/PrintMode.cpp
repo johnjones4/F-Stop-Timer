@@ -1,5 +1,5 @@
 #include <PrintMode.h>
-#include <TimeScaler.h>
+#include <timescale.h>
 #include <../../include/values.h>
 
 PrintMode::PrintMode(SystemIO* systemIo) : Mode(systemIo)

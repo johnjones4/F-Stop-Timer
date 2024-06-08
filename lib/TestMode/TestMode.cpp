@@ -1,6 +1,6 @@
 #include <TestMode.h>
 #include <../../include/values.h>
-#include <TimeScaler.h>
+#include <timescale.h>
 
 TestMode::TestMode(SystemIO* systemIo) : Mode(systemIo)
 {
