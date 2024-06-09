@@ -13,11 +13,12 @@ void TestMode::step()
   {
     this->systemIo->setLight(LOW);
 
+    this->stopAt = 0;
     this->timesIndex++;
     if (!nextTime(false)) {
       this->showDefaultTime();
-      this->stopAt = 0;     
       this->timesIndex = -1; 
+      Serial.println("Test strip complete");
     }
   } 
 
@@ -33,7 +34,9 @@ void TestMode::step()
   else 
   {
     this->systemIo->setLight(LOW);
-    this->showDefaultTime();
+    if (this->timesIndex < 0) {
+      this->showDefaultTime();
+    }
 
     if (this->systemIo->isStarted())
     {
@@ -58,13 +61,14 @@ bool TestMode::nextTime(bool start)
   if (this->timesIndex < 0 || this->timesIndex >= N_STEPS) {
     return false;
   }
+  Serial.printf("Ready for test %d\n", this->timesIndex);
   double time = this->times[this->timesIndex];
   unsigned long timeMillis = (unsigned long)(time * 1000);
   if (start) {
     this->stopAt = millis() + timeMillis;
   }
   this->systemIo->printTime(timeMillis);
-  this->systemIo->setBracketLight(-1);
+  this->systemIo->setBracketLight(this->timesIndex);
   return true;
 }
 
@@ -73,5 +77,6 @@ unsigned long TestMode::showDefaultTime()
   double baseTime = this->systemIo->getBaseTimeSelector();
   unsigned long timeMillis = (unsigned long)(baseTime * 1000);
   this->systemIo->printTime(timeMillis);
+  this->systemIo->setBracketLight(-1);
   return timeMillis;
 }

@@ -45,10 +45,6 @@ SystemIO::SystemIO()
     printTimePins[i] = PRINT_TIME_FIRST_PIN + i;
   }
   this->printTimeSelector = new Selector(mcps[PRINT_CHIP], printTimePins, N_STEPS);
-
-  for (int i = 0; i < N_STEPS; i++) {
-    mcps[STEP_CHIP]->pinMode(STEP_FIRST_PIN + i, OUTPUT);
-  }
 }
 
 bool SystemIO::begin()
@@ -58,6 +54,13 @@ bool SystemIO::begin()
       Serial.printf("Failed to start MCP #%d\n", i);
       return false;
     }
+  }
+
+  for (int i = 0; i < N_STEPS; i++) {
+    mcps[STEP_CHIP]->pinMode(STEP_FIRST_PIN + i, OUTPUT);
+    mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, HIGH);
+    delay(500);
+    mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, LOW);
   }
 
   pinMode(LIGHT_PIN, OUTPUT);
@@ -127,6 +130,6 @@ void SystemIO::printTime(unsigned long millis)
 void SystemIO::setBracketLight(int ii)
 {
   for (int i = 0; i < N_STEPS; i++) {
-    mcps[STEP_CHIP]->pinMode(STEP_FIRST_PIN + i, i == ii ? HIGH : LOW);
+    mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, i == ii ? HIGH : LOW);
   }
 }
