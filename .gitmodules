@@ -1,0 +1,3 @@
+[submodule "lib/TM1637Display"]
+	path = lib/TM1637Display
+	url = git@github.com:clytras/TM1637Display.git
