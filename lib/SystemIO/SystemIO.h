@@ -31,6 +31,13 @@ private:
   Selector* stopDeltaSelector;
   Selector* printTimeSelector;
   unsigned long lastStartPress = 0;
+  void showNumberFloat(float num,
+									int prec /*= -1*/,
+									bool leading_zero /*= false*/,
+									uint8_t length /*= 4*/,
+									uint8_t pos /*= 0*/);
+  void showString(char *str);
+  uint8_t selectDigit(char digit);
 };
 
 #endif
