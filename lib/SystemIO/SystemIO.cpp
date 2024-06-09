@@ -63,6 +63,8 @@ bool SystemIO::begin()
     mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, LOW);
   }
 
+  this->display->setBrightness(7, true);
+
   pinMode(LIGHT_PIN, OUTPUT);
   this->printMode->begin();
   this->focusMode->begin();
@@ -122,9 +124,8 @@ void SystemIO::setLight(int mode)
 
 void SystemIO::printTime(unsigned long millis)
 {
-  double seconds = ((double)millis) / 1000;
-  Serial.printf("Time: %0.1f\n", seconds);
-  this->display->showNumberDecEx(seconds, 0b01000000, false, 4, 0);
+  unsigned long seconds = millis / 100;
+  this->display->showNumberDecEx(seconds, 0b00000000, false, 4, 0);
 }
 
 void SystemIO::setBracketLight(int ii)
