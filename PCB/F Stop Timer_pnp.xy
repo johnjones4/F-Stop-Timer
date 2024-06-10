@@ -1,0 +1,35 @@
+# Pick And Place List
+# Company=
+# Author=
+# eMail=
+#
+# Project=F Stop Timer
+# Date=18:09:25
+# CreatedBy=Fritzing 1.0.2b.2023-12-20.CD-1901-0-dbdbe34c
+#
+#
+# Coordinates in mils, always center of component
+# Origin 0/0=Lower left corner of PCB
+# Rotation in degree (0-360, math. pos.)
+#
+RefDes,Description,Package,X,Y,Rotation,Side,Mount
+Description: resistance;capacitance;inductance;voltage;current;power;mpn;mn;
+Print 4,";;;;;;;;","THT",2012.26,2726.7,-90,Top,THT
+Light/Start,";;;;;;;;","THT",3384.47,586.7,90,Top,THT
+IC2,";;;;;;;;","",2798.37,2056.7,0,Top,MANUAL
+Step 3,";;;;;;;;","THT",4068.37,2442.8,0,Top,THT
+Delta 1,";;;;;;;;","THT",712.267,2726.7,-90,Top,THT
+Step 2,";;;;;;;;","THT",4068.37,2042.8,0,Top,THT
+Base Time 1,";;;;;;;;","THT",1512.26,2726.7,-90,Top,THT
+Step 1,";;;;;;;;","THT",4068.37,1642.8,-6.36109e-15,Top,THT
+Delta 2,";;;;;;;;","THT",312.267,2726.7,-90,Top,THT
+Mode/Focus,";;;;;;;;","THT",3784.47,586.7,90,Top,THT
+Display Data,";;;;;;;;","THT",4184.47,586.7,90,Top,THT
+5v,";;;;;;;;","THT",2984.47,586.7,90,Top,THT
+Step 4,";;;;;;;;","THT",4068.37,2842.8,0,Top,THT
+IC1,";;;;;;;;","",898.367,2056.7,0,Top,MANUAL
+U1,";;;;;;;;","",1165.32,1107.09,0,Top,MANUAL
+Base Time 2,";;;;;;;;","THT",1112.26,2726.7,-90,Top,THT
+Print 1,";;;;;;;;","THT",3212.27,2726.7,-90,Top,THT
+Print 2,";;;;;;;;","THT",2812.26,2726.7,-90,Top,THT
+Print 3,";;;;;;;;","THT",2412.26,2726.7,-90,Top,THT
