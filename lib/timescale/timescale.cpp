@@ -20,5 +20,5 @@ int generateTimes(double *times, int nTimes, double baseTime, double stopDelta)
 double generateTime(double baseTime, double stopDelta, double nSteps)
 {
   float stops = nSteps * stopDelta;
-  return baseTime * pow(baseTime, stops);
+  return baseTime * pow(2, stops);
 }
