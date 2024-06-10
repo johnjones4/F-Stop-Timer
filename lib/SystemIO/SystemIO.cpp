@@ -124,7 +124,7 @@ void SystemIO::setLight(int mode)
 
 void SystemIO::printTime(unsigned long millis)
 {
-  unsigned long seconds = millis / 100;
+  int seconds = millis / 100;
   this->display->showNumberDecEx(seconds, 0b00100000, false, 4, 0);
 }
 
