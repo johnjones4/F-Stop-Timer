@@ -36,8 +36,6 @@ void test_generateTime() {
       }
     }
   }
-
-  
 }
 
 int main() {
