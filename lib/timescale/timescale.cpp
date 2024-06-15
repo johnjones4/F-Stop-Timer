@@ -10,7 +10,7 @@ int generateTimes(double *times, int nTimes, double baseTime, double stopDelta)
   for (int i = 0; i < nTimes; i++) {
     double time = generateTime(baseTime, stopDelta, base + (double)i);
     if (i > 0) {
-      time = time - times[i - 1];
+      time = time - generateTime(baseTime, stopDelta, base + (double)(i-1));
     }
     times[i] = time;
   }

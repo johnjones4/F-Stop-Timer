@@ -19,7 +19,7 @@
 #define PRINT_TIME_FIRST_PIN 0
 #define STEP_FIRST_PIN 8
 
-#define DISPLAY_CLK 23
-#define DISPLAY_DIO 18
+#define DISPLAY_ADDRESS   0x70
+
 
 #endif

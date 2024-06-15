@@ -19,7 +19,7 @@ SystemIO::SystemIO()
     this->mcps[i] = new Adafruit_MCP23X17();
   }
   
-  this->display = new TM1637Display(DISPLAY_CLK, DISPLAY_DIO);
+  this->display = new Adafruit_7segment();
   
   this->printMode = new Toggle(MODE_PIN);
   this->focusMode = new Toggle(FOCUS_PIN);
@@ -49,6 +49,7 @@ SystemIO::SystemIO()
 
 bool SystemIO::begin()
 {
+  Serial.println("Starting MCP");
   for (int i = 0; i < N_MCPS; i++) {
     if (!this->mcps[i]->begin_I2C(MCP23XXX_ADDR + i)) {
       Serial.printf("Failed to start MCP #%d\n", i);
@@ -56,6 +57,7 @@ bool SystemIO::begin()
     }
   }
 
+  Serial.println("Setting up bracket lights");
   for (int i = 0; i < N_STEPS; i++) {
     mcps[STEP_CHIP]->pinMode(STEP_FIRST_PIN + i, OUTPUT);
     mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, HIGH);
@@ -63,8 +65,15 @@ bool SystemIO::begin()
     mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, LOW);
   }
 
-  this->display->setBrightness(7, true);
+  Serial.println("Starting display");
+  if (!this->display->begin(DISPLAY_ADDRESS))
+  {
+    Serial.println("Failed to start display");
+    return false;
+  }
+  this->display->setBrightness(15);
 
+  Serial.println("Setting up I/O");
   pinMode(LIGHT_PIN, OUTPUT);
   this->printMode->begin();
   this->focusMode->begin();
@@ -124,8 +133,9 @@ void SystemIO::setLight(int mode)
 
 void SystemIO::printTime(unsigned long millis)
 {
-  int seconds = millis / 100;
-  this->display->showNumberDecEx(seconds, 0b00100000, false, 4, 0);
+  double seconds = (double)millis / 1000;
+  this->display->printFloat(seconds, 1, 10);
+  this->display->writeDisplay();
 }
 
 void SystemIO::setBracketLight(int ii)

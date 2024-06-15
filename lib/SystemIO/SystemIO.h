@@ -4,8 +4,7 @@
 #include <Adafruit_MCP23X17.h>
 #include <Selector.h>
 #include <Toggle.h>
-#include <TM1637Display.h>
-
+#include <Adafruit_LEDBackpack.h>
 
 class SystemIO
 {
@@ -23,7 +22,7 @@ public:
   void setBracketLight(int i);
 private:
   Adafruit_MCP23X17** mcps;
-  TM1637Display* display;
+  Adafruit_7segment * display;
   Toggle* printMode;
   Toggle* focusMode;
   Toggle* startButton;
