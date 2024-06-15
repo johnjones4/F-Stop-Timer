@@ -13,7 +13,9 @@ void Application::begin()
   Serial.begin(9600);
   if (!this->systemIo->begin()) {
     Serial.println("Failed to start system IO");
+    while (true) {}
   }
+  Serial.println("Ready");
 }
   
 void Application::step()

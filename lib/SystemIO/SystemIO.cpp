@@ -20,16 +20,6 @@ SystemIO::SystemIO()
   this->printMode = new Toggle(MODE_PIN);
   this->focusMode = new Toggle(FOCUS_PIN);
   this->startButton = new Toggle(START_PIN);
-  
-  // int *baseTimePins = (int*)malloc(sizeof(int) * N_BASE_TIMES);
-  // for (int i = 0; i < N_BASE_TIMES; i++)
-  // {
-  //   baseTimePins[i] = BASE_TIME_FIRST_PIN + i;
-  // }
-  // this->baseTimeSelector = new Selector(mcps[BASE_TIME_CHIP], baseTimePins, N_BASE_TIMES);
-  
-  int stopDeltaPins[N_STOP_DELTAS] = DELTA_PINS;
-  this->stopDeltaSelector = new Selector(NULL, stopDeltaPins, N_STOP_DELTAS);
 
   int *printTimePins = (int*)malloc(sizeof(int) * N_STEPS);
   for (int i = 0; i < N_STEPS; i++)
@@ -37,6 +27,15 @@ SystemIO::SystemIO()
     printTimePins[i] = PRINT_TIME_FIRST_PIN + i;
   }
   this->printTimeSelector = new Selector(mcp, printTimePins, N_STEPS);
+
+  int *stopDeltaPins = (int*)malloc(sizeof(int) * N_STOP_DELTAS);
+  int tempPins[N_STOP_DELTAS] = DELTA_PINS;
+  for (int i = 0; i < N_STOP_DELTAS; i++)
+  {
+    stopDeltaPins[i] = tempPins[i];
+  }
+  this->stopDeltaSelector = new Selector(NULL, stopDeltaPins, N_STOP_DELTAS);
+
 }
 
 bool SystemIO::begin()
@@ -137,6 +136,7 @@ void SystemIO::setBracketLight(int ii)
 }
 
 void SystemIO::step() {
-  this->encoder->tick();
-  this->baseTime += (0.5 * (double)this->encoder->getPosition());
+  encoder->tick();
+  double dir = (double)(encoder->getDirection());
+  baseTime += dir * 0.5;
 }
