@@ -14,55 +14,47 @@ double stopDeltas[N_STOP_DELTAS] = {
 
 SystemIO::SystemIO()
 {
-  this->mcps = (Adafruit_MCP23X17**)malloc(sizeof(Adafruit_MCP23X17*) * N_MCPS);
-  for (int i = 0; i < N_MCPS; i++) {
-    this->mcps[i] = new Adafruit_MCP23X17();
-  }
-  
+  this->mcp = new Adafruit_MCP23X17();
   this->display = new Adafruit_7segment();
   
   this->printMode = new Toggle(MODE_PIN);
   this->focusMode = new Toggle(FOCUS_PIN);
   this->startButton = new Toggle(START_PIN);
   
-  int *baseTimePins = (int*)malloc(sizeof(int) * N_BASE_TIMES);
-  for (int i = 0; i < N_BASE_TIMES; i++)
-  {
-    baseTimePins[i] = BASE_TIME_FIRST_PIN + i;
-  }
-  this->baseTimeSelector = new Selector(mcps[BASE_TIME_CHIP], baseTimePins, N_BASE_TIMES);
+  // int *baseTimePins = (int*)malloc(sizeof(int) * N_BASE_TIMES);
+  // for (int i = 0; i < N_BASE_TIMES; i++)
+  // {
+  //   baseTimePins[i] = BASE_TIME_FIRST_PIN + i;
+  // }
+  // this->baseTimeSelector = new Selector(mcps[BASE_TIME_CHIP], baseTimePins, N_BASE_TIMES);
   
-  int *stopDeltaPins = (int*)malloc(sizeof(int) * N_STOP_DELTAS);
-  for (int i = 0; i < N_STOP_DELTAS; i++)
-  {
-    stopDeltaPins[i] = STOP_DELTA_FIRST_PIN + i;
-  }
-  this->stopDeltaSelector = new Selector(mcps[DELTA_CHIP], stopDeltaPins, N_STOP_DELTAS);
+  int stopDeltaPins[N_STOP_DELTAS] = DELTA_PINS;
+  this->stopDeltaSelector = new Selector(NULL, stopDeltaPins, N_STOP_DELTAS);
 
   int *printTimePins = (int*)malloc(sizeof(int) * N_STEPS);
   for (int i = 0; i < N_STEPS; i++)
   {
     printTimePins[i] = PRINT_TIME_FIRST_PIN + i;
   }
-  this->printTimeSelector = new Selector(mcps[PRINT_CHIP], printTimePins, N_STEPS);
+  this->printTimeSelector = new Selector(mcp, printTimePins, N_STEPS);
 }
 
 bool SystemIO::begin()
 {
+  this->encoder = new RotaryEncoder(TIME_CHANNEL_A_PIN, TIME_CHANNEL_B_PIN, RotaryEncoder::LatchMode::TWO03);
+
   Serial.println("Starting MCP");
-  for (int i = 0; i < N_MCPS; i++) {
-    if (!this->mcps[i]->begin_I2C(MCP23XXX_ADDR + i)) {
-      Serial.printf("Failed to start MCP #%d\n", i);
-      return false;
-    }
+  if (!this->mcp->begin_I2C(MCP23XXX_ADDR)) {
+    Serial.println("Failed to start MCP");
+    return false;
   }
 
   Serial.println("Setting up bracket lights");
   for (int i = 0; i < N_STEPS; i++) {
-    mcps[STEP_CHIP]->pinMode(STEP_FIRST_PIN + i, OUTPUT);
-    mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, HIGH);
-    delay(500);
-    mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, LOW);
+    mcp->pinMode(STEP_FIRST_PIN + i, OUTPUT);
+    mcp->digitalWrite(STEP_FIRST_PIN + i, HIGH);
+    delay(100);
+    mcp->digitalWrite(STEP_FIRST_PIN + i, LOW);
   }
 
   Serial.println("Starting display");
@@ -78,7 +70,7 @@ bool SystemIO::begin()
   this->printMode->begin();
   this->focusMode->begin();
   this->startButton->begin();
-  this->baseTimeSelector->begin();
+  // this->baseTimeSelector->begin();
   this->stopDeltaSelector->begin();
   this->printTimeSelector->begin();
   
@@ -108,8 +100,7 @@ bool SystemIO::isStarted()
 
 double SystemIO::getBaseTimeSelector()
 {
-  double i = (double)this->baseTimeSelector->getSelectedIndex();
-  return pow(2, i) * BASE_TIME;
+  return baseTime;
 }
 
 double SystemIO::getStopDeltaSelector()
@@ -141,6 +132,11 @@ void SystemIO::printTime(unsigned long millis)
 void SystemIO::setBracketLight(int ii)
 {
   for (int i = 0; i < N_STEPS; i++) {
-    mcps[STEP_CHIP]->digitalWrite(STEP_FIRST_PIN + i, i == ii ? HIGH : LOW);
+    mcp->digitalWrite(STEP_FIRST_PIN + i, i == ii ? HIGH : LOW);
   }
+}
+
+void SystemIO::step() {
+  this->encoder->tick();
+  this->baseTime += (0.5 * (double)this->encoder->getPosition());
 }

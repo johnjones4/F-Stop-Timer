@@ -18,6 +18,8 @@ void Application::begin()
   
 void Application::step()
 {
+  this->systemIo->step();
+  
   // Focus light overrides all
   if (this->systemIo->isFocusMode()) {
     this->systemIo->setLight(HIGH);

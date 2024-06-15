@@ -5,6 +5,7 @@
 #include <Selector.h>
 #include <Toggle.h>
 #include <Adafruit_LEDBackpack.h>
+#include <RotaryEncoder.h>
 
 class SystemIO
 {
@@ -20,15 +21,17 @@ public:
   void setLight(int mode);
   void printTime(unsigned long millis);
   void setBracketLight(int i);
+  void step();
 private:
-  Adafruit_MCP23X17** mcps;
+  Adafruit_MCP23X17* mcp;
   Adafruit_7segment * display;
+  RotaryEncoder *encoder;
   Toggle* printMode;
   Toggle* focusMode;
   Toggle* startButton;
-  Selector* baseTimeSelector;
   Selector* stopDeltaSelector;
   Selector* printTimeSelector;
+  double baseTime = 15;
   unsigned long lastStartPress = 0;
   void showNumberFloat(float num,
 									int prec /*= -1*/,
