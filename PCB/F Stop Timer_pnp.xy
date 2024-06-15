@@ -4,7 +4,7 @@
 # eMail=
 #
 # Project=F Stop Timer
-# Date=18:09:25
+# Date=16:19:58
 # CreatedBy=Fritzing 1.0.2b.2023-12-20.CD-1901-0-dbdbe34c
 #
 #
@@ -14,22 +14,26 @@
 #
 RefDes,Description,Package,X,Y,Rotation,Side,Mount
 Description: resistance;capacitance;inductance;voltage;current;power;mpn;mn;
-Print 4,";;;;;;;;","THT",2012.26,2726.7,-90,Top,THT
-Light/Start,";;;;;;;;","THT",3384.47,586.7,90,Top,THT
-IC2,";;;;;;;;","",2798.37,2056.7,0,Top,MANUAL
-Step 3,";;;;;;;;","THT",4068.37,2442.8,0,Top,THT
-Delta 1,";;;;;;;;","THT",712.267,2726.7,-90,Top,THT
-Step 2,";;;;;;;;","THT",4068.37,2042.8,0,Top,THT
-Base Time 1,";;;;;;;;","THT",1512.26,2726.7,-90,Top,THT
-Step 1,";;;;;;;;","THT",4068.37,1642.8,-6.36109e-15,Top,THT
-Delta 2,";;;;;;;;","THT",312.267,2726.7,-90,Top,THT
-Mode/Focus,";;;;;;;;","THT",3784.47,586.7,90,Top,THT
-Display Data,";;;;;;;;","THT",4184.47,586.7,90,Top,THT
-5v,";;;;;;;;","THT",2984.47,586.7,90,Top,THT
-Step 4,";;;;;;;;","THT",4068.37,2842.8,0,Top,THT
-IC1,";;;;;;;;","",898.367,2056.7,0,Top,MANUAL
-U1,";;;;;;;;","",1165.32,1107.09,0,Top,MANUAL
-Base Time 2,";;;;;;;;","THT",1112.26,2726.7,-90,Top,THT
-Print 1,";;;;;;;;","THT",3212.27,2726.7,-90,Top,THT
-Print 2,";;;;;;;;","THT",2812.26,2726.7,-90,Top,THT
-Print 3,";;;;;;;;","THT",2412.26,2726.7,-90,Top,THT
+R1,"100;;;;;0.25W;;;","THT",425.627,2077.9,90,Top,THT
+Print 1,";;;;;;;;","THT",2951.73,2997.9,-90,Top,THT
+Print 3,";;;;;;;;","THT",2151.73,2997.9,-90,Top,THT
+Mode/Focus,";;;;;;;;","THT",4061.73,557.9,90,Top,THT
+U1,";;;;;;;;","",1442.58,1078.29,0,Top,MANUAL
+Step 4,";;;;;;;;","THT",3845.63,2751.79,0,Top,THT
+Print 2,";;;;;;;;","THT",2551.73,2997.9,-90,Top,THT
+LED3,";;;;0.030A;;;;","5 mm [THT]",3425.63,2803.53,0,Top,THT
+IC2,";;;;;;;;","",2275.63,2527.9,0,Top,MANUAL
+LED1,";;;;0.030A;;;;","5 mm [THT]",225.627,2803.53,0,Top,THT
+Print 4,";;;;;;;;","THT",1751.73,2997.9,-90,Top,THT
+Step 1,";;;;;;;;","THT",3845.63,1551.79,-6.36109e-15,Top,THT
+Step 3,";;;;;;;;","THT",3845.63,2351.79,0,Top,THT
+GND/3v,";;;;;;;;","THT",205.627,1504,180,Top,THT
+LED2,";;;;0.030A;;;;","5 mm [THT]",225.633,303.534,0,Top,THT
+Encoder,";;;;;;;;","THT",1351.73,2997.9,-90,Top,THT
+D2,";;;;;;;;","THT",551.727,2997.9,-90,Top,THT
+D1,";;;;;;;;","THT",951.727,2997.9,-90,Top,THT
+Light/Start,";;;;;;;;","THT",3661.73,557.9,90,Top,THT
+GND/5v,";;;;;;;;","THT",3261.73,557.9,90,Top,THT
+LED4,";;;;0.030A;;;;","5 mm [THT]",2925.63,303.534,0,Top,THT
+Display Data,";;;;;;;;","THT",3845.63,1151.79,0,Top,THT
+Step 2,";;;;;;;;","THT",3845.63,1951.79,0,Top,THT
