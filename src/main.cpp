@@ -1,12 +1,12 @@
 #include <Arduino.h>
-#include <Application.h>
+#include <Runtime.h>
 
-Application app;
+Runtime rt;
 
 void setup() {
-  app.begin();
+  
 }
 
 void loop() {
-  app.step();
+  // put your main code here, to run repeatedly:
 }

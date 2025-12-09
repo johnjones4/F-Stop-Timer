@@ -6,20 +6,9 @@ Selector::Selector(Adafruit_MCP23X17* mcp, int* pins, int nPins)
   this->mcp = mcp;
   this->pins = pins;
   this->nPins = nPins;
-}
-
-void Selector::begin()
-{
   for (int i = 0; i < this->nPins; i++)
   {
-    if (this->mcp != NULL) 
-    {
-      this->mcp->pinMode(this->pins[i], INPUT_PULLUP);
-    } 
-    else 
-    {
-      pinMode(this->pins[i], INPUT_PULLUP);
-    }
+    this->mcp->pinMode(this->pins[i], INPUT_PULLUP);
   }
 }
 
