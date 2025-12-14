@@ -8,20 +8,20 @@
 #include <Selector.h>
 
 typedef enum {
-  MemSet  = 0,
-  Mem1    = 1,
-  Mem2    = 2,
-  Mem3    = 3,
-  Mem4    = 4,
+  Reset   = 0,
+  MemSet  = 1,
+  Mem1    = 2,
+  Mem2    = 3,
+  Mem3    = 4,
   Start   = 5,
 } ButtonName;
 
 #define N_BUTTONS 6
 
 typedef enum {
-  BaseTime    = 0,
-  TimeDelta   = 1,
-  PrintStop   = 2,
+  BaseTime      = 0,
+  StepInterval  = 1,
+  PrintStop     = 2,
 } DialName;
 
 #define N_DIALS 3

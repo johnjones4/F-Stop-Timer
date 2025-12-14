@@ -2,8 +2,10 @@
 
 #define STEP_DELTA_BASE_PIN 0
 #define STEP_DELTA_LEDS 4
-#define PRINT_STOP_BASE_PIN 0
+#define PRINT_STOP_BASE_PIN 4
 #define PRINT_STOP_LEDS 7
+#define ENLARGER_PIN 11
+#define BUZZER_PIN 12
 
 int getDigitAtPos(double value, int n) {
   // Work with positive values only
@@ -46,6 +48,8 @@ bool OutputManager::begin() {
     Serial.println("Failed to start input MCP");
     return false;
   }
+  this->mcp->pinMode(ENLARGER_PIN, OUTPUT);
+  this->mcp->pinMode(BUZZER_PIN, OUTPUT);
 
   this->stepDelta = new LedSequence(this->mcp, STEP_DELTA_BASE_PIN, STEP_DELTA_LEDS);
   this->printStop = new LedSequence(this->mcp, PRINT_STOP_BASE_PIN, PRINT_STOP_LEDS);
@@ -56,6 +60,18 @@ bool OutputManager::begin() {
   return true;
 }
 
+void OutputManager::step() {
+  if (this->nextBuzzerOff > 0 && millis() > this->nextBuzzerOff) {
+    this->mcp->digitalWrite(BUZZER_PIN, LOW);  
+    this->nextBuzzerOff = 0;
+  }
+}
+
+void OutputManager::click() {
+  this->mcp->digitalWrite(BUZZER_PIN, HIGH);
+  this->nextBuzzerOff = millis() + 20;
+}
+
 void OutputManager::setStepDeltaLed(int n) {
   this->stepDelta->set(n);
 }
@@ -64,28 +80,34 @@ void OutputManager::setPrintStopLed(int n) {
   this->printStop->set(n);
 }
 
-void OutputManager::setTime(float value) {
-   if (value < 0.0f) value = 0.0f;
-   if (value > 99.9f) value = 99.9f;
+void OutputManager::setTime(unsigned long t) {
+  float value = ((float)t) / 1000.0f;
 
-   // Convert to fixed 1-decimal representation
-   int scaled = (int)(value * 10 + 0.5f);  // e.g., 12.34 → 123
+  if (value < 0.0f) value = 0.0f;
+  if (value > 99.9f) value = 99.9f;
 
-   int ones  = (scaled / 10) % 10;  // digit before decimal
-   int tens  = (scaled / 100);      // leftmost digit
-   int tenths = scaled % 10;        // digit after decimal
+  // Convert to fixed 1-decimal representation
+  int scaled = (int)(value * 10 + 0.5f);  // e.g., 12.34 → 123
 
-   // Rightmost digit: tenths (no decimal point)
-   this->lc->setDigit(0, 0, tenths, false);
+  int ones  = (scaled / 10) % 10;  // digit before decimal
+  int tens  = (scaled / 100);      // leftmost digit
+  int tenths = scaled % 10;        // digit after decimal
 
-   // Middle digit: ones, WITH decimal point
-   this->lc->setDigit(0, 1, ones, true);
+  // Rightmost digit: tenths (no decimal point)
+  this->lc->setDigit(0, 0, tenths, false);
 
-   // Leftmost digit: tens (blank if zero)
-   if (tens > 0) {
-    this->lc->setDigit(0, 2, tens, false);
-   } else {
-    // Blank leading digit
-    this->lc->setChar(0, 2, ' ', false);
-   }
+  // Middle digit: ones, WITH decimal point
+  this->lc->setDigit(0, 1, ones, true);
+
+  // Leftmost digit: tens (blank if zero)
+  if (tens > 0) {
+  this->lc->setDigit(0, 2, tens, false);
+  } else {
+  // Blank leading digit
+  this->lc->setChar(0, 2, ' ', false);
+  }
+}
+
+void OutputManager::setEnlarger(bool en) {
+  this->mcp->digitalWrite(ENLARGER_PIN, en ? HIGH : LOW);
 }

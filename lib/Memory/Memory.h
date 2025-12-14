@@ -6,11 +6,12 @@
 typedef struct {
   int magicNumber;
   float baseTime;
-  float stopInterval;
-  int stop;
+  int stepIntervalIndex;
+  int stopIndex;
 } Settings;
 
 class Memory {
+public:
   Memory(int address);
   bool begin();
   void write(int slot, Settings* settings);

@@ -1,9 +1,8 @@
 #include <InputManager.h>
 
-#define BUTTONS_BASE_PIN 0
+#define BUTTONS_BASE_PIN 10
 #define DIALS_BASE_PIN 0
-
-#define MODE_PIN 0
+const int modePins[] = {7, 8, 9};
 
 InputManager::InputManager(int address) {
   this->address = address;
@@ -12,7 +11,6 @@ InputManager::InputManager(int address) {
 bool InputManager::begin() {
   this->mcp = new Adafruit_MCP23X17();
   Serial.println("Starting MCP");
-  // MCP23XXX_ADDR
   if (!this->mcp->begin_I2C(this->address)) {
     Serial.println("Failed to start input MCP");
     return false;
@@ -26,7 +24,9 @@ bool InputManager::begin() {
     this->encoders[i] = new RotaryEncoder(this->mcp, (BUTTONS_BASE_PIN + i) * 2, ((BUTTONS_BASE_PIN + i) * 2) + 1);
   }
 
-  this->modeSelector = new Selector(this->mcp, MODE_PIN, N_MODES);
+  int *buffer = (int*)malloc(sizeof(int)*N_MODES);
+  memcpy(buffer, modePins, sizeof(int)*N_MODES);
+  this->modeSelector = new Selector(this->mcp, buffer, N_MODES);
 
   return true;
 }

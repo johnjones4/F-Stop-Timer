@@ -26,7 +26,7 @@ void Memory::read(int slot, Settings* settings) {
   this->ee->readBlock(slot, (uint8_t *)settings, sizeof(Settings));
   if (settings->magicNumber != MAGIC_NUMBER) {
     settings->baseTime = 0;
-    settings->stop = 1;
-    settings->stopInterval = 0;
+    settings->stopIndex = 3;
+    settings->stepIntervalIndex = 0;
   }
 }
