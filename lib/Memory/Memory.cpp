@@ -20,8 +20,8 @@ bool Memory::begin() {
 }
 
 void Memory::write(int slot, Settings* settings) {
-#ifdef ENABLE_EEPROM_MEMORY
   settings->magicNumber = MAGIC_NUMBER;
+#ifdef ENABLE_EEPROM_MEMORY
   this->ee->writeBlock(slot, (uint8_t *)settings, sizeof(Settings));
 #else
   memcpy(&this->slots[slot], settings, sizeof(Settings));
@@ -35,8 +35,8 @@ void Memory::read(int slot, Settings* settings) {
   memcpy(settings, &this->slots[slot], sizeof(Settings));
 #endif
   if (settings->magicNumber != MAGIC_NUMBER) {
-    settings->baseTime = 0;
-    settings->stopIndex = 3;
+    settings->baseTime = 30000;
+    settings->stopIndex = 4;
     settings->stepIntervalIndex = 0;
   }
 }

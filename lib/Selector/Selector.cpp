@@ -15,13 +15,7 @@ Selector::Selector(Adafruit_MCP23X17* mcp, int* pins, int nPins)
 int Selector::getSelectedIndex()
 {
   for (int i = 0; i < this->nPins; i++) { 
-    int status = 0;
-    if (this->mcp != NULL)
-    {
-      status = this->mcp->digitalRead(this->pins[i]);
-    } else {
-      status = digitalRead(this->pins[i]);
-    }
+    int status = this->mcp->digitalRead(this->pins[i]);
     if (status == LOW) {
       return i;
     }

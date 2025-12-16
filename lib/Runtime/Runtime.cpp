@@ -26,7 +26,9 @@ void Runtime::begin() {
   if (!this->memory->begin()) {
     while (true) {}
   }
-#ifndef TEST_MODE
+#ifdef TEST_MODE
+  this->start = 30000;
+#else
   this->memory->read(0, &this->settings);
   this->lastMode = this->input->getSelectedMode();
   this->reset();
@@ -39,9 +41,21 @@ void Runtime::step() {
   this->output->step();
 #ifdef TEST_MODE
   unsigned long now = millis();
-  this->output->setTime(now);
+  this->output->setTime(this->start);
   this->output->setPrintStopLed((now / 1000) % N_STOPS);
   this->output->setStepDeltaLed((now / 1000) % N_STEP_INTERVALS);
+  this->output->setEnlarger(now / 1000 % 2);
+  Direction bt = this->input->getDialDirection(BaseTime);
+  switch (bt) {
+  case CLOCKWISE: {
+    this->start += 500;
+    break;
+  }
+  case COUNTERCLOCKWISE: {
+    this->start -= 500;
+    break;
+  }
+  }
 #else
   Mode nextMode = this->input->getSelectedMode();
   if (nextMode != this->lastMode || this->input->isPressed(Reset) || this->changedMem()) {
@@ -51,6 +65,7 @@ void Runtime::step() {
     this->runningTimer();
   } else if (this->input->isPressed(Start)) {
     this->start = millis();
+    this->output->setEnlarger(true);
     this->runningTimer();
   } else if (this->changedBaseTime() || this->changedStepInterval() || this->changedPrintStop()) {
     this->reset();
@@ -100,12 +115,12 @@ bool Runtime::changedBaseTime() {
   Direction bt = this->input->getDialDirection(BaseTime);
   switch (bt) {
   case CLOCKWISE: {
-    float next = this->settings.baseTime + 0.5;
-    this->settings.baseTime = min(99.5, next);
+    unsigned long next = this->settings.baseTime + 500;
+    this->settings.baseTime = min(99500, next);
     return true;
   }
   case COUNTERCLOCKWISE: {
-    float next = this->settings.baseTime - 0.5;
+    unsigned long next = this->settings.baseTime - 500;
     this->settings.baseTime = max(0, next);
     return true;
   }
@@ -179,6 +194,7 @@ void Runtime::runningTimer() {
   unsigned long now = millis();
   unsigned long elapsed = millis() - this->start;
   if (elapsed >= this->times[this->currentTime]) {
+    this->output->setEnlarger(false);
     this->currentTime = (this->currentTime + 1) % this->nTimes;
     this->output->setTime(this->times[this->currentTime]);
     this->start = 0;

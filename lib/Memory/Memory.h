@@ -6,7 +6,7 @@
 
 typedef struct {
   int magicNumber;
-  float baseTime;
+  unsigned long baseTime;
   int stepIntervalIndex;
   int stopIndex;
 } Settings;

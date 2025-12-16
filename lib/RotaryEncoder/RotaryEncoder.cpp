@@ -8,6 +8,7 @@ const int8_t KNOBDIR[] = {
 
 RotaryEncoder::RotaryEncoder(Adafruit_MCP23X17* mcp, int pin1, int pin2)
 {
+  this->mcp = mcp;
   // Remember Hardware Setup
   _pin1 = pin1;
   _pin2 = pin2;
@@ -46,19 +47,20 @@ Direction RotaryEncoder::getDirection()
 }
 
 void RotaryEncoder::step() {
-  int sig1 = this->mcp->digitalRead(_pin1);
-  int sig2 = this->mcp->digitalRead(_pin2);
+  int sig1 = (int8_t)this->mcp->digitalRead(_pin1);
+  int sig2 = (int8_t)this->mcp->digitalRead(_pin2);
   int8_t thisState = sig1 | (sig2 << 1);
 
   if (_oldState != thisState) {
+    // Serial.println(sig2 << 1);
     _position += KNOBDIR[thisState | (_oldState << 2)];
     _oldState = thisState;
 
     if ((thisState == 0) || (thisState == 3)) {
       // The hardware has 2 steps with a latch on the input state 0 and 3
       _positionExt = _position >> 1;
-      _positionExtTimePrev = _positionExtTime;
-      _positionExtTime = millis();
+      // _positionExtTimePrev = _positionExtTime;
+      // _positionExtTime = millis();
     }
   } // if
 }

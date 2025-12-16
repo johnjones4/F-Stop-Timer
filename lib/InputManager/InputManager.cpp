@@ -2,6 +2,7 @@
 #include <../../include/defs.h>
 
 const int modePins[N_MODES] = MODE_PINS;
+const int dialPins[N_DIALS][2] = DIAL_PINS;
 
 InputManager::InputManager(int address) {
   this->address = address;
@@ -20,7 +21,7 @@ bool InputManager::begin() {
   }
 
   for (int i = 0; i < N_DIALS; i++) {
-    this->encoders[i] = new RotaryEncoder(this->mcp, (BUTTONS_BASE_PIN + i) * 2, ((BUTTONS_BASE_PIN + i) * 2) + 1);
+    this->encoders[i] = new RotaryEncoder(this->mcp, dialPins[i][0], dialPins[i][1]);
   }
 
   int *buffer = (int*)malloc(sizeof(int)*N_MODES);
@@ -32,7 +33,7 @@ bool InputManager::begin() {
 
 void InputManager::step() {
   for (int i = 0; i < N_DIALS; i++) {
-    // this->encoders[i]->step();
+    this->encoders[i]->step();
   }
 }
 
