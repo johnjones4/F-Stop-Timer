@@ -36,7 +36,7 @@ OutputManager::OutputManager(int address) {
 
 bool OutputManager::begin() {
   this->mcp = new Adafruit_MCP23X17();
-  Serial.println("Starting MCP");
+  Serial.println("Starting output MCP");
   //MCP23XXX_ADDR
   if (!this->mcp->begin_I2C(this->address)) {
     Serial.println("Failed to start input MCP");
@@ -47,7 +47,7 @@ bool OutputManager::begin() {
 
   this->stepDelta = new LedSequence(this->mcp, STEP_DELTA_BASE_PIN, STEP_DELTA_LEDS);
   this->printStop = new LedSequence(this->mcp, PRINT_STOP_BASE_PIN, PRINT_STOP_LEDS);
-  this->lc = new LedControl(MOSI, SCK, 10, 1);
+  this->lc = new LedControl(MOSI, SCK, DISPLAY_CS_PIN, 1);
   this->lc->shutdown(0,false);
   this->lc->setIntensity(0,8);
   this->lc->clearDisplay(0);
@@ -88,17 +88,17 @@ void OutputManager::setTime(unsigned long t) {
   int tenths = scaled % 10;        // digit after decimal
 
   // Rightmost digit: tenths (no decimal point)
-  this->lc->setDigit(0, 0, tenths, false);
+  this->lc->setDigit(0, 2, tenths, false);
 
   // Middle digit: ones, WITH decimal point
   this->lc->setDigit(0, 1, ones, true);
 
   // Leftmost digit: tens (blank if zero)
   if (tens > 0) {
-  this->lc->setDigit(0, 2, tens, false);
+  this->lc->setDigit(0, 0, tens, false);
   } else {
   // Blank leading digit
-  this->lc->setChar(0, 2, ' ', false);
+  this->lc->setChar(0, 0, ' ', false);
   }
 }
 

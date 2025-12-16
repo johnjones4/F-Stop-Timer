@@ -26,9 +26,12 @@ void Runtime::begin() {
   if (!this->memory->begin()) {
     while (true) {}
   }
+#ifndef TEST_MODE
   this->memory->read(0, &this->settings);
   this->lastMode = this->input->getSelectedMode();
   this->reset();
+#endif
+  Serial.println("Ready");
 }
 
 void Runtime::step() {
@@ -36,7 +39,7 @@ void Runtime::step() {
   this->output->step();
 #ifdef TEST_MODE
   unsigned long now = millis();
-  this->output->setTime(now / 100);
+  this->output->setTime(now);
   this->output->setPrintStopLed((now / 1000) % PRINT_STOP_LEDS);
   this->output->setStepDeltaLed((now / 1000) % STEP_DELTA_LEDS);
 #else

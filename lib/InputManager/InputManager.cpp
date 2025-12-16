@@ -9,7 +9,7 @@ InputManager::InputManager(int address) {
 
 bool InputManager::begin() {
   this->mcp = new Adafruit_MCP23X17();
-  Serial.println("Starting MCP");
+  Serial.println("Starting input MCP");
   if (!this->mcp->begin_I2C(this->address)) {
     Serial.println("Failed to start input MCP");
     return false;
@@ -32,7 +32,7 @@ bool InputManager::begin() {
 
 void InputManager::step() {
   for (int i = 0; i < N_DIALS; i++) {
-    this->encoders[i]->step();
+    // this->encoders[i]->step();
   }
 }
 
