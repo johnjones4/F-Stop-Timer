@@ -1,16 +1,17 @@
 #include <LedSequence.h>
 
-LedSequence::LedSequence(Adafruit_MCP23X17* mcp, int pin, int nPins) {
+LedSequence::LedSequence(Adafruit_MCP23X17* mcp, const int* pins, int nPins) {
   this->mcp = mcp;
-  this->pin = pin;
+  this->pins = (int*)malloc(sizeof(int) * nPins);
+  memcpy(this->pins, pins, sizeof(int) * nPins);
   this->nPins = nPins;
   for (int i = 0; i < nPins; i++) {
-    mcp->pinMode(pin + i, OUTPUT);
+    mcp->pinMode(pins[i], OUTPUT);
   }
 }
 
 void LedSequence::set(int n) {
   for (int i = 0; i < nPins; i++) {
-    mcp->digitalWrite(pin + i, i == n ? HIGH : LOW);
+    mcp->digitalWrite(pins[i], i == n ? HIGH : LOW);
   }
 }

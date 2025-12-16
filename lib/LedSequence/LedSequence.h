@@ -5,11 +5,11 @@
 
 class LedSequence {
 public:
-  LedSequence(Adafruit_MCP23X17* mcp, int pin, int nPins);
+  LedSequence(Adafruit_MCP23X17* mcp, const int* pins, int nPins);
   void set(int n);
 private:
   Adafruit_MCP23X17* mcp;
-  int pin;
+  int* pins;
   int nPins;
 };
 

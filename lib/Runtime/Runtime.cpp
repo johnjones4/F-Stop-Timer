@@ -40,8 +40,8 @@ void Runtime::step() {
 #ifdef TEST_MODE
   unsigned long now = millis();
   this->output->setTime(now);
-  this->output->setPrintStopLed((now / 1000) % PRINT_STOP_LEDS);
-  this->output->setStepDeltaLed((now / 1000) % STEP_DELTA_LEDS);
+  this->output->setPrintStopLed((now / 1000) % N_STOPS);
+  this->output->setStepDeltaLed((now / 1000) % N_STEP_INTERVALS);
 #else
   Mode nextMode = this->input->getSelectedMode();
   if (nextMode != this->lastMode || this->input->isPressed(Reset) || this->changedMem()) {

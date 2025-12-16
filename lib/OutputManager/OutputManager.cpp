@@ -1,6 +1,9 @@
 #include <OutputManager.h>
 #include <../../include/defs.h>
 
+const int stepDeltaPins[N_STEP_INTERVALS] = STEP_DELTA_PINS;
+const int printStopPins[N_STOPS] = PRINT_STOP_PINS;
+
 int getDigitAtPos(double value, int n) {
   // Work with positive values only
   if (value < 0) value = -value;
@@ -45,8 +48,8 @@ bool OutputManager::begin() {
   this->mcp->pinMode(ENLARGER_PIN, OUTPUT);
   this->mcp->pinMode(BUZZER_PIN, OUTPUT);
 
-  this->stepDelta = new LedSequence(this->mcp, STEP_DELTA_BASE_PIN, STEP_DELTA_LEDS);
-  this->printStop = new LedSequence(this->mcp, PRINT_STOP_BASE_PIN, PRINT_STOP_LEDS);
+  this->stepDelta = new LedSequence(this->mcp, stepDeltaPins, N_STEP_INTERVALS);
+  this->printStop = new LedSequence(this->mcp, printStopPins, N_STOPS);
   this->lc = new LedControl(MOSI, SCK, DISPLAY_CS_PIN, 1);
   this->lc->shutdown(0,false);
   this->lc->setIntensity(0,8);
