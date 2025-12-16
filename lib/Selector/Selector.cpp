@@ -1,10 +1,11 @@
 #include <Selector.h>
 #include <Arduino.h>
 
-Selector::Selector(Adafruit_MCP23X17* mcp, int* pins, int nPins)
+Selector::Selector(Adafruit_MCP23X17* mcp, const int* pins, int nPins)
 {
   this->mcp = mcp;
-  this->pins = pins;
+  this->pins = (int*)malloc(sizeof(int) * nPins);
+  memcpy(this->pins, pins, sizeof(int) * nPins);
   this->nPins = nPins;
   for (int i = 0; i < this->nPins; i++)
   {

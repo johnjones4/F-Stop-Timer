@@ -3,6 +3,7 @@
 
 const int modePins[N_MODES] = MODE_PINS;
 const int dialPins[N_DIALS][2] = DIAL_PINS;
+const int buttonPins[N_BUTTONS] = BUTTON_PINS;
 
 InputManager::InputManager(int address) {
   this->address = address;
@@ -17,16 +18,14 @@ bool InputManager::begin() {
   }
 
   for (int i = 0; i < N_BUTTONS; i++) {
-    this->buttons[i] = new Button(this->mcp, BUTTONS_BASE_PIN + i);
+    this->buttons[i] = new Button(this->mcp, buttonPins[i]);
   }
 
   for (int i = 0; i < N_DIALS; i++) {
     this->encoders[i] = new RotaryEncoder(this->mcp, dialPins[i][0], dialPins[i][1]);
   }
 
-  int *buffer = (int*)malloc(sizeof(int)*N_MODES);
-  memcpy(buffer, modePins, sizeof(int)*N_MODES);
-  this->modeSelector = new Selector(this->mcp, buffer, N_MODES);
+  this->modeSelector = new Selector(this->mcp, modePins, N_MODES);
 
   return true;
 }

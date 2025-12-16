@@ -6,7 +6,7 @@
 class Selector
 {
 public:
-  Selector(Adafruit_MCP23X17* mcp, int* pins, int nPins);
+  Selector(Adafruit_MCP23X17* mcp, const int* pins, int nPins);
   int getSelectedIndex();
 private:
   Adafruit_MCP23X17* mcp;

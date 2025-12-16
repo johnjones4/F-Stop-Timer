@@ -79,33 +79,35 @@ void Runtime::step() {
 void Runtime::reset() {
   this->lastMode = this->input->getSelectedMode();
   this->writeMode = false;
-  this->output->setEnlarger(false);
   this->start = 0;
-  this->output->setPrintStopLed(-1);
-  this->output->setStepDeltaLed(-1);
-  this->output->setTime(0);
   this->currentTime = 0;
   this->nextClick = 0;
   switch (this->lastMode) {
   case Focus:
+    this->output->setTime(0);
     this->output->setEnlarger(true);
+    this->output->setPrintStopLed(-1);
+    this->output->setStepDeltaLed(-1);
     break;
   case Test:
+    this->output->setEnlarger(false);
     this->output->setStepDeltaLed(this->settings.stepIntervalIndex);
     this->output->setPrintStopLed(0);
     generateTimes(this->times, N_STOPS, this->settings.baseTime, stepIntervals[this->settings.stepIntervalIndex]);
-    this->nTimes = 7;
+    this->nTimes = N_STOPS;
     this->output->setTime(this->times[this->currentTime]);
+    this->memory->write(0, &this->settings);
     break;
   case Print:
+    this->output->setEnlarger(false);
     this->output->setStepDeltaLed(this->settings.stepIntervalIndex);
     this->output->setPrintStopLed(this->settings.stopIndex);
     this->times[0] = generateTime(this->settings.baseTime, stepIntervals[this->settings.stepIntervalIndex], stops[this->settings.stopIndex]);
     this->nTimes = 1;
     this->output->setTime(this->times[this->currentTime]);
+    this->memory->write(0, &this->settings);
     break;
   }
-  this->memory->write(0, &this->settings);
 }
 
 bool Runtime::changedBaseTime() {
