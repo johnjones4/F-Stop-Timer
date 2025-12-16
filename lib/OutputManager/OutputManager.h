@@ -8,7 +8,7 @@ class OutputManager {
 public:
   OutputManager(int address);
   bool begin();
-  void setStepDeltaLed(int n);
+  void setStepIntervalLed(int n);
   void setPrintStopLed(int n);
   void setTime(unsigned long t);
   void setEnlarger(bool en);
@@ -17,7 +17,7 @@ public:
 private:
   Adafruit_MCP23X17* mcp;
   int address;
-  LedSequence *stepDelta;
+  LedSequence *stepInterval;
   LedSequence *printStop;
   LedControl *lc;
   unsigned long nextBuzzerOff = 0;

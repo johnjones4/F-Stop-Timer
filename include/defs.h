@@ -20,7 +20,7 @@
 #define STEP_INTERVALS {0.25, 0.33, 0.5, 1}
 #define STOPS {-3, -2, -1, 0, 1, 2, 3}
 #define MODE_PINS {14, 15, 0}
-#define STEP_DELTA_PINS {8, 9, 10, 11}
+#define STEP_INTERVAL_PINS {8, 9, 10, 11}
 #define PRINT_STOP_PINS {12, 13, 14, 15, 0, 1, 2}
 #define DIAL_PINS {{9,8},{11,10},{13,12}}
 #define BUTTON_PINS {1, 2, 3, 4, 5, 6}

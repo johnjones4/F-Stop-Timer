@@ -1,7 +1,7 @@
 #include <OutputManager.h>
 #include <../../include/defs.h>
 
-const int stepDeltaPins[N_STEP_INTERVALS] = STEP_DELTA_PINS;
+const int stepIntervalPins[N_STEP_INTERVALS] = STEP_INTERVAL_PINS;
 const int printStopPins[N_STOPS] = PRINT_STOP_PINS;
 
 int getDigitAtPos(double value, int n) {
@@ -48,7 +48,7 @@ bool OutputManager::begin() {
   this->mcp->pinMode(ENLARGER_PIN, OUTPUT);
   this->mcp->pinMode(BUZZER_PIN, OUTPUT);
 
-  this->stepDelta = new LedSequence(this->mcp, stepDeltaPins, N_STEP_INTERVALS);
+  this->stepInterval = new LedSequence(this->mcp, stepIntervalPins, N_STEP_INTERVALS);
   this->printStop = new LedSequence(this->mcp, printStopPins, N_STOPS);
   this->lc = new LedControl(MOSI, SCK, DISPLAY_CS_PIN, 1);
   this->lc->shutdown(0,false);
@@ -69,8 +69,8 @@ void OutputManager::click() {
   this->nextBuzzerOff = millis() + 20;
 }
 
-void OutputManager::setStepDeltaLed(int n) {
-  this->stepDelta->set(n);
+void OutputManager::setStepIntervalLed(int n) {
+  this->stepInterval->set(n);
 }
 
 void OutputManager::setPrintStopLed(int n) {

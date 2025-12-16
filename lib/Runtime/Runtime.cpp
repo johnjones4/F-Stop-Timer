@@ -6,8 +6,8 @@
 const double stepIntervals[N_STEP_INTERVALS] = STEP_INTERVALS;
 const int stops[N_STOPS] = STOPS;
 
-int generateTimes(unsigned long *times, int nTimes, unsigned long baseTime, double stopDelta);
-unsigned long generateTime(unsigned long baseTime, double stopDelta, int nSteps);
+int generateTimes(unsigned long *times, int nTimes, unsigned long baseTime, double stepInterval);
+unsigned long generateTime(unsigned long baseTime, double stepInterval, int nStops);
 
 void Runtime::begin() {
   Serial.begin(9600);
@@ -43,7 +43,7 @@ void Runtime::step() {
   unsigned long now = millis();
   this->output->setTime(this->start);
   this->output->setPrintStopLed((now / 1000) % N_STOPS);
-  this->output->setStepDeltaLed((now / 1000) % N_STEP_INTERVALS);
+  this->output->setStepIntervalLed((now / 1000) % N_STEP_INTERVALS);
   this->output->setEnlarger(now / 1000 % 2);
   Direction bt = this->input->getDialDirection(BaseTime);
   switch (bt) {
@@ -87,11 +87,11 @@ void Runtime::reset() {
     this->output->setTime(0);
     this->output->setEnlarger(true);
     this->output->setPrintStopLed(-1);
-    this->output->setStepDeltaLed(-1);
+    this->output->setStepIntervalLed(-1);
     break;
   case Test:
     this->output->setEnlarger(false);
-    this->output->setStepDeltaLed(this->settings.stepIntervalIndex);
+    this->output->setStepIntervalLed(this->settings.stepIntervalIndex);
     this->output->setPrintStopLed(0);
     generateTimes(this->times, N_STOPS, this->settings.baseTime, stepIntervals[this->settings.stepIntervalIndex]);
     this->nTimes = N_STOPS;
@@ -100,7 +100,7 @@ void Runtime::reset() {
     break;
   case Print:
     this->output->setEnlarger(false);
-    this->output->setStepDeltaLed(this->settings.stepIntervalIndex);
+    this->output->setStepIntervalLed(this->settings.stepIntervalIndex);
     this->output->setPrintStopLed(this->settings.stopIndex);
     this->times[0] = generateTime(this->settings.baseTime, stepIntervals[this->settings.stepIntervalIndex], stops[this->settings.stopIndex]);
     this->nTimes = 1;
@@ -214,24 +214,24 @@ void Runtime::runningTimer() {
   }
 }
 
-int generateTimes(unsigned long *times, int nTimes, unsigned long baseTime, double stopDelta)
+int generateTimes(unsigned long *times, int nTimes, unsigned long baseTime, double stepInterval)
 {
   if (nTimes % 2 == 0) {
     return -1;
   }
   int base = -1 * (float)((nTimes - 1)/2);
   for (int i = 0; i < nTimes; i++) {
-    unsigned long time = generateTime(baseTime, stopDelta, base + i);
+    unsigned long time = generateTime(baseTime, stepInterval, base + i);
     if (i > 0) {
-      time = time - generateTime(baseTime, stopDelta, base + (i-1));
+      time = time - generateTime(baseTime, stepInterval, base + (i-1));
     }
     times[i] = time;
   }
   return 0;
 }
 
-unsigned long generateTime(unsigned long baseTime, double stopDelta, int nSteps)
+unsigned long generateTime(unsigned long baseTime, double stepInterval, int nStops)
 {
-  double stops = (double)nSteps * stopDelta;
+  double stops = (double)nStops * stepInterval;
   return baseTime * ((unsigned long)pow(2, stops));
 }
