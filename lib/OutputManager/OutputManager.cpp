@@ -1,11 +1,5 @@
 #include <OutputManager.h>
-
-#define STEP_DELTA_BASE_PIN 0
-#define STEP_DELTA_LEDS 4
-#define PRINT_STOP_BASE_PIN 4
-#define PRINT_STOP_LEDS 7
-#define ENLARGER_PIN 11
-#define BUZZER_PIN 12
+#include <../../include/defs.h>
 
 int getDigitAtPos(double value, int n) {
   // Work with positive values only

@@ -6,6 +6,7 @@
 #include <Adafruit_MCP23X17.h>
 #include <RotaryEncoder.h>
 #include <Selector.h>
+#include <../../include/defs.h>
 
 typedef enum {
   Reset   = 0,
@@ -16,23 +17,18 @@ typedef enum {
   Start   = 5,
 } ButtonName;
 
-#define N_BUTTONS 6
-
 typedef enum {
   BaseTime      = 0,
   StepInterval  = 1,
   PrintStop     = 2,
 } DialName;
 
-#define N_DIALS 3
 
 typedef enum {
   Focus = 0,
   Test  = 1,
   Print = 2,
 } Mode;
-
-#define N_MODES 3
 
 class InputManager {
 public:

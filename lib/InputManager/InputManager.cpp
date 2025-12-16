@@ -1,8 +1,7 @@
 #include <InputManager.h>
+#include <../../include/defs.h>
 
-#define BUTTONS_BASE_PIN 10
-#define DIALS_BASE_PIN 0
-const int modePins[] = {7, 8, 9};
+const int modePins[N_MODES] = MODE_PINS;
 
 InputManager::InputManager(int address) {
   this->address = address;

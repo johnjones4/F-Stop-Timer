@@ -4,8 +4,6 @@
 #include <LedSequence.h>
 #include <LedControl.h>
 
-//TODO speaker
-
 class OutputManager {
 public:
   OutputManager(int address);

@@ -1,11 +1,10 @@
 #include <Runtime.h>
 #include <Wire.h>
 #include <Arduino.h>
+#include <../../include/defs.h>
 
-const double stepIntervals[] = {0.25, 0.33, 0.5, 1};
-#define N_STEP_INTERVALS 4
-const int stops[] = {-3, -2, -1, 0, 1, 2, 3};
-#define N_STOPS 7
+const double stepIntervals[N_STEP_INTERVALS] = STEP_INTERVALS;
+const int stops[N_STOPS] = STOPS;
 
 int generateTimes(unsigned long *times, int nTimes, unsigned long baseTime, double stopDelta);
 unsigned long generateTime(unsigned long baseTime, double stopDelta, int nSteps);
@@ -14,9 +13,9 @@ void Runtime::begin() {
   Serial.begin(9600);
   Wire.begin();
 
-  this->input = new InputManager(MCP23XXX_ADDR);
-  this->output = new OutputManager(MCP23XXX_ADDR + 1);
-  this->memory = new Memory(0x50);
+  this->input = new InputManager(INPUT_ADDR);
+  this->output = new OutputManager(OUTPUT_ADDR);
+  this->memory = new Memory(EEPROM_ADDR);
 
   if (!this->input->begin()) {
     while (true) {}
@@ -35,6 +34,12 @@ void Runtime::begin() {
 void Runtime::step() {
   this->input->step();
   this->output->step();
+#ifdef TEST_MODE
+  unsigned long now = millis();
+  this->output->setTime(now / 100);
+  this->output->setPrintStopLed((now / 1000) % PRINT_STOP_LEDS);
+  this->output->setStepDeltaLed((now / 1000) % STEP_DELTA_LEDS);
+#else
   Mode nextMode = this->input->getSelectedMode();
   if (nextMode != this->lastMode || this->input->isPressed(Reset) || this->changedMem()) {
     this->reset();
@@ -50,6 +55,7 @@ void Runtime::step() {
     this->reset();
     this->writeMode = true;
   }
+#endif
 }
 
 void Runtime::reset() {
