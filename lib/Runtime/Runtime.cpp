@@ -77,7 +77,11 @@ void Runtime::step() {
 }
 
 void Runtime::reset() {
-  this->lastMode = this->input->getSelectedMode();
+  Mode nextMode = this->input->getSelectedMode();
+  if (nextMode == None) {
+    return;
+  }
+  this->lastMode = nextMode;
   this->writeMode = false;
   this->start = 0;
   this->currentTime = 0;

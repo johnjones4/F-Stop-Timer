@@ -28,6 +28,7 @@ typedef enum {
   Focus = 0,
   Test  = 1,
   Print = 2,
+  None = 3,
 } Mode;
 
 class InputManager {

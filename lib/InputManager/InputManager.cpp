@@ -60,7 +60,7 @@ unsigned long InputManager::getDialSpeed(DialName d) {
 Mode InputManager::getSelectedMode() {
   int s = this->modeSelector->getSelectedIndex();
   if (s < 0 || s >= N_MODES) {
-    return Focus;
+    return None;
   }
   return (Mode)s;
 }
