@@ -37,6 +37,7 @@ public:
   void step();
   bool isPressed(ButtonName b);
   RotaryEncoder::Direction getDialDirection(DialName d);
+  unsigned long getDialSpeed(DialName d);
   Mode getSelectedMode();
 private:
   int address;

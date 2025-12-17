@@ -115,15 +115,20 @@ bool Runtime::changedBaseTime() {
     return false;
   }
   RotaryEncoder::Direction bt = this->input->getDialDirection(BaseTime);
+  unsigned long speed = this->input->getDialSpeed(BaseTime);
+  unsigned long inc = speed * 10;
   switch (bt) {
   case RotaryEncoder::Direction::CLOCKWISE: {
-    unsigned long next = this->settings.baseTime + 100;
+    unsigned long next = this->settings.baseTime + inc;
     this->settings.baseTime = min(99500, next);
     return true;
   }
   case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
-    unsigned long next = this->settings.baseTime - 100;
-    this->settings.baseTime = max(0, next);
+    if (inc > this->settings.baseTime) {
+      this->settings.baseTime = 0;
+    } else {
+      this->settings.baseTime = this->settings.baseTime - inc;
+    }    
     return true;
   }
   default:

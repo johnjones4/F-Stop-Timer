@@ -50,6 +50,13 @@ RotaryEncoder::Direction InputManager::getDialDirection(DialName d) {
   return this->encoders[d]->getDirection();
 }
 
+unsigned long InputManager::getDialSpeed(DialName d) {
+  if (d < 0 || d >= N_BUTTONS) {
+    return 0;
+  }
+  return this->encoders[d]->getRPM();
+}
+
 Mode InputManager::getSelectedMode() {
   int s = this->modeSelector->getSelectedIndex();
   if (s < 0 || s >= N_MODES) {
