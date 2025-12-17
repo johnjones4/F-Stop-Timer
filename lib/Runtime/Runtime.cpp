@@ -95,7 +95,7 @@ void Runtime::reset() {
     this->output->setPrintStopLed(0);
     generateTimes(this->times, N_STOPS, this->settings.baseTime, stepIntervals[this->settings.stepIntervalIndex]);
     this->nTimes = N_STOPS;
-    this->output->setTime(this->times[this->currentTime]);
+    this->output->setTime(this->settings.baseTime);
     this->memory->write(0, &this->settings);
     break;
   case Print:
@@ -117,12 +117,12 @@ bool Runtime::changedBaseTime() {
   Direction bt = this->input->getDialDirection(BaseTime);
   switch (bt) {
   case CLOCKWISE: {
-    unsigned long next = this->settings.baseTime + 500;
+    unsigned long next = this->settings.baseTime + 100;
     this->settings.baseTime = min(99500, next);
     return true;
   }
   case COUNTERCLOCKWISE: {
-    unsigned long next = this->settings.baseTime - 500;
+    unsigned long next = this->settings.baseTime - 100;
     this->settings.baseTime = max(0, next);
     return true;
   }
@@ -233,5 +233,5 @@ int generateTimes(unsigned long *times, int nTimes, unsigned long baseTime, doub
 unsigned long generateTime(unsigned long baseTime, double stepInterval, int nStops)
 {
   double stops = (double)nStops * stepInterval;
-  return baseTime * ((unsigned long)pow(2, stops));
+  return (unsigned long)((double)baseTime * pow(2, stops));
 }
