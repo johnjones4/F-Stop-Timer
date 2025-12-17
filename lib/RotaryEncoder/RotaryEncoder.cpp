@@ -1,36 +1,111 @@
-#include <RotaryEncoder.h>
+// -----
+// RotaryEncoder.cpp - Library for using rotary encoders.
+// This class is implemented for use with the Arduino environment.
+//
+// Copyright (c) by Matthias Hertel, http://www.mathertel.de
+//
+// This work is licensed under a BSD 3-Clause style license,
+// https://www.mathertel.de/License.aspx.
+//
+// More information on: http://www.mathertel.de/Arduino
+// -----
+// Changelog: see RotaryEncoder.h
+// -----
 
-const int8_t KNOBDIR[] = {
-  0, -1, 1, 0,
-  1, 0, 0, -1,
-  -1, 0, 0, 1,
-  0, 1, -1, 0};
+#include "RotaryEncoder.h"
+#include "Arduino.h"
 
-RotaryEncoder::RotaryEncoder(Adafruit_MCP23X17* mcp, int pin1, int pin2)
+void BuiltInInputProvider::pinMode(uint8_t pin, uint8_t mode)
+{
+  pinMode(pin, mode);
+}
+
+int BuiltInInputProvider::digitalRead(uint8_t pin)
+{
+  return digitalRead(pin);
+}
+
+MCP23XXXInputProvider::MCP23XXXInputProvider(Adafruit_MCP23XXX *mcp)
 {
   this->mcp = mcp;
+}
+
+void MCP23XXXInputProvider::pinMode(uint8_t pin, uint8_t mode)
+{
+  this->mcp->pinMode(pin, mode);
+}
+
+int MCP23XXXInputProvider::digitalRead(uint8_t pin)
+{
+  return this->mcp->digitalRead(pin);
+}
+
+#define LATCH0 0 // input state at position 0
+#define LATCH3 3 // input state at position 3
+
+
+// The array holds the values �1 for the entries where a position was decremented,
+// a 1 for the entries where the position was incremented
+// and 0 in all the other (no change or not valid) cases.
+
+const int8_t KNOBDIR[] = {
+    0, -1, 1, 0,
+    1, 0, 0, -1,
+    -1, 0, 0, 1,
+    0, 1, -1, 0};
+
+
+// positions: [3] 1 0 2 [3] 1 0 2 [3]
+// [3] is the positions where my rotary switch detends
+// ==> right, count up
+// <== left,  count down
+
+
+// ----- Initialization and Default Values -----
+
+RotaryEncoder::RotaryEncoder(InputProvider *provider, int pin1, int pin2, LatchMode mode = LatchMode::FOUR0)
+{
+  this->provider = provider;
+
+  int sig1 = 0;
+  int sig2 = 0;
+
   // Remember Hardware Setup
   _pin1 = pin1;
   _pin2 = pin2;
+  _mode = mode;
 
   // Setup the input pins and turn on pullup resistor
-  mcp->pinMode(pin1, INPUT_PULLUP);
-  mcp->pinMode(pin2, INPUT_PULLUP);
-
-  // when not started in motion, the current state of the encoder should be 3
-  int sig1 = mcp->digitalRead(_pin1);
-  int sig2 = mcp->digitalRead(_pin2);
+  if ((pin1 >= 0) && (pin2 >= 0)) {
+    this->provider->pinMode(pin1, INPUT_PULLUP);
+    this->provider->pinMode(pin2, INPUT_PULLUP);
+    // when not started in motion, the current state of the encoder should be 3
+    sig1 = this->provider->digitalRead(_pin1);
+    sig2 = this->provider->digitalRead(_pin2);
+  }
+  
   _oldState = sig1 | (sig2 << 1);
-
+  
   // start with position 0;
   _position = 0;
   _positionExt = 0;
   _positionExtPrev = 0;
-}
+} // RotaryEncoder()
 
-Direction RotaryEncoder::getDirection()
+
+RotaryEncoder::RotaryEncoder(int pin1, int pin2, LatchMode mode = LatchMode::FOUR0) : RotaryEncoder(new BuiltInInputProvider(), pin1, pin2, mode) {}
+
+RotaryEncoder::RotaryEncoder(Adafruit_MCP23XXX *mcp, int pin1, int pin2, LatchMode mode = LatchMode::FOUR0) : RotaryEncoder(new MCP23XXXInputProvider(mcp), pin1, pin2, mode) {}
+
+long RotaryEncoder::getPosition()
 {
-  Direction ret = Direction::NOROTATION;
+  return _positionExt;
+} // getPosition()
+
+
+RotaryEncoder::Direction RotaryEncoder::getDirection()
+{
+  RotaryEncoder::Direction ret = Direction::NOROTATION;
 
   if (_positionExtPrev > _positionExt) {
     ret = Direction::COUNTERCLOCKWISE;
@@ -46,21 +121,92 @@ Direction RotaryEncoder::getDirection()
   return ret;
 }
 
-void RotaryEncoder::step() {
-  int sig1 = (int8_t)this->mcp->digitalRead(_pin1);
-  int sig2 = (int8_t)this->mcp->digitalRead(_pin2);
+
+void RotaryEncoder::setPosition(long newPosition)
+{
+  switch (_mode) {
+  case LatchMode::FOUR3:
+  case LatchMode::FOUR0:
+    // only adjust the external part of the position.
+    _position = ((newPosition << 2) | (_position & 0x03L));
+    _positionExt = newPosition;
+    _positionExtPrev = newPosition;
+    break;
+
+  case LatchMode::TWO03:
+    // only adjust the external part of the position.
+    _position = ((newPosition << 1) | (_position & 0x01L));
+    _positionExt = newPosition;
+    _positionExtPrev = newPosition;
+    break;
+  } // switch
+
+} // setPosition()
+
+
+// Slow, but Simple Variant by directly Read-Out of the Digital State within loop-call
+void RotaryEncoder::tick(void)
+{
+  int sig1 = this->provider->digitalRead(_pin1);
+  int sig2 = this->provider->digitalRead(_pin2);
+  tick(sig1, sig2);
+} // tick()
+
+// When a faster method than digitalRead is available you can _tick with the 2 values directly.
+void RotaryEncoder::tick(int sig1, int sig2)
+{ 
+  unsigned long now = millis();
   int8_t thisState = sig1 | (sig2 << 1);
 
   if (_oldState != thisState) {
-    // Serial.println(sig2 << 1);
     _position += KNOBDIR[thisState | (_oldState << 2)];
     _oldState = thisState;
 
-    if ((thisState == 0) || (thisState == 3)) {
-      // The hardware has 2 steps with a latch on the input state 0 and 3
-      _positionExt = _position >> 1;
-      // _positionExtTimePrev = _positionExtTime;
-      // _positionExtTime = millis();
-    }
+    switch (_mode) {
+    case LatchMode::FOUR3:
+      if (thisState == LATCH3) {
+        // The hardware has 4 steps with a latch on the input state 3
+        _positionExt = _position >> 2;
+        _positionExtTimePrev = _positionExtTime;
+        _positionExtTime = now;
+      }
+      break;
+
+    case LatchMode::FOUR0:
+      if (thisState == LATCH0) {
+        // The hardware has 4 steps with a latch on the input state 0
+        _positionExt = _position >> 2;
+        _positionExtTimePrev = _positionExtTime;
+        _positionExtTime = now;
+      }
+      break;
+
+    case LatchMode::TWO03:
+      if ((thisState == LATCH0) || (thisState == LATCH3)) {
+        // The hardware has 2 steps with a latch on the input state 0 and 3
+        _positionExt = _position >> 1;
+        _positionExtTimePrev = _positionExtTime;
+        _positionExtTime = now;
+      }
+      break;
+    } // switch
   } // if
+} // tick()
+
+
+unsigned long RotaryEncoder::getMillisBetweenRotations() const
+{
+  return (_positionExtTime - _positionExtTimePrev);
 }
+
+unsigned long RotaryEncoder::getRPM()
+{
+  // calculate max of difference in time between last position changes or last change and now.
+  unsigned long timeBetweenLastPositions = _positionExtTime - _positionExtTimePrev;
+  unsigned long timeToLastPosition = millis() - _positionExtTime;
+  unsigned long t = max(timeBetweenLastPositions, timeToLastPosition);
+  return 60000.0 / ((float)(t * 20));
+}
+
+
+// End

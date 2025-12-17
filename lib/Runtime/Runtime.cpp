@@ -114,14 +114,14 @@ bool Runtime::changedBaseTime() {
   if (this->lastMode == Focus) {
     return false;
   }
-  Direction bt = this->input->getDialDirection(BaseTime);
+  RotaryEncoder::Direction bt = this->input->getDialDirection(BaseTime);
   switch (bt) {
-  case CLOCKWISE: {
+  case RotaryEncoder::Direction::CLOCKWISE: {
     unsigned long next = this->settings.baseTime + 100;
     this->settings.baseTime = min(99500, next);
     return true;
   }
-  case COUNTERCLOCKWISE: {
+  case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
     unsigned long next = this->settings.baseTime - 100;
     this->settings.baseTime = max(0, next);
     return true;
@@ -135,14 +135,14 @@ bool Runtime::changedStepInterval() {
   if (this->lastMode == Focus) {
     return false;
   }
-  Direction bt = this->input->getDialDirection(StepInterval);
+  RotaryEncoder::Direction bt = this->input->getDialDirection(StepInterval);
   switch (bt) {
-  case CLOCKWISE: {
+  case RotaryEncoder::Direction::CLOCKWISE: {
     int next = this->settings.stepIntervalIndex + 1;
     this->settings.stepIntervalIndex = min(N_STEP_INTERVALS, next);
     return true;
   }
-  case COUNTERCLOCKWISE: {
+  case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
     int next = this->settings.stepIntervalIndex - 1;
     this->settings.stepIntervalIndex = max(0, next);
     return true;
@@ -156,14 +156,14 @@ bool Runtime::changedPrintStop() {
   if (this->lastMode != Print) {
     return false;
   }
-  Direction bt = this->input->getDialDirection(PrintStop);
+  RotaryEncoder::Direction bt = this->input->getDialDirection(PrintStop);
   switch (bt) {
-  case CLOCKWISE: {
+  case RotaryEncoder::Direction::CLOCKWISE: {
     int next = this->settings.stopIndex + 1;
     this->settings.stopIndex = min(N_STOPS, next);
     return true;
   }
-  case COUNTERCLOCKWISE: {
+  case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
     int next = this->settings.stopIndex - 1;
     this->settings.stopIndex = max(0, next);
     return true;

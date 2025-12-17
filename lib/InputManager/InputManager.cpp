@@ -32,7 +32,7 @@ bool InputManager::begin() {
 
 void InputManager::step() {
   for (int i = 0; i < N_DIALS; i++) {
-    this->encoders[i]->step();
+    this->encoders[i]->tick();
   }
 }
 
@@ -43,9 +43,9 @@ bool InputManager::isPressed(ButtonName b) {
   return this->buttons[b]->isPressed();
 }
 
-Direction InputManager::getDialDirection(DialName d) {
+RotaryEncoder::Direction InputManager::getDialDirection(DialName d) {
   if (d < 0 || d >= N_BUTTONS) {
-    return NOROTATION;
+    return RotaryEncoder::Direction::NOROTATION;
   }
   return this->encoders[d]->getDirection();
 }
