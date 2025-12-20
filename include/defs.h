@@ -24,3 +24,5 @@
 #define PRINT_STOP_PINS {12, 13, 14, 15, 0, 1, 2}
 #define DIAL_PINS {{9,8},{11,10},{13,12}}
 #define BUTTON_PINS {1, 2, 3, 4, 5, 6}
+
+#define POSITION_BUFFER_SIZE 1000

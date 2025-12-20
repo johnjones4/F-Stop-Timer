@@ -18,6 +18,7 @@ private:
   bool changedPrintStop();
   bool changedMem();
   void runningTimer();
+  void afterRead();
   InputManager* input;
   OutputManager* output;
   Memory* memory;
@@ -29,6 +30,8 @@ private:
   unsigned long start = 0;
   bool writeMode = false;
   unsigned long nextClick = 0;
+  int stepIntervalPositionBuffer = 0;
+  int printStopPositionBuffer = 0;
 };
 
 #endif

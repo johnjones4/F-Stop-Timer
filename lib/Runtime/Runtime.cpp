@@ -30,6 +30,7 @@ void Runtime::begin() {
   this->start = 30000;
 #else
   this->memory->read(0, &this->settings);
+  this->afterRead();
   this->lastMode = this->input->getSelectedMode();
   this->reset();
 #endif
@@ -147,13 +148,15 @@ bool Runtime::changedStepInterval() {
   RotaryEncoder::Direction bt = this->input->getDialDirection(StepInterval);
   switch (bt) {
   case RotaryEncoder::Direction::CLOCKWISE: {
-    int next = this->settings.stepIntervalIndex + 1;
-    this->settings.stepIntervalIndex = min(N_STEP_INTERVALS, next);
+    int next = this->stepIntervalPositionBuffer + 1;
+    this->stepIntervalPositionBuffer = min(N_STEP_INTERVALS * POSITION_BUFFER_SIZE, next);
+    this->settings.stepIntervalIndex = this->stepIntervalPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
   case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
-    int next = this->settings.stepIntervalIndex - 1;
-    this->settings.stepIntervalIndex = max(0, next);
+    int next = this->stepIntervalPositionBuffer - 1;
+    this->stepIntervalPositionBuffer = max(0, next);
+    this->settings.stepIntervalIndex = this->stepIntervalPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
   default:
@@ -168,13 +171,15 @@ bool Runtime::changedPrintStop() {
   RotaryEncoder::Direction bt = this->input->getDialDirection(PrintStop);
   switch (bt) {
   case RotaryEncoder::Direction::CLOCKWISE: {
-    int next = this->settings.stopIndex + 1;
-    this->settings.stopIndex = min(N_STOPS, next);
+    int next = this->printStopPositionBuffer + 1;
+    this->printStopPositionBuffer = min(N_STOPS * POSITION_BUFFER_SIZE, next);
+    this->settings.stopIndex = this->printStopPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
   case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
-    int next = this->settings.stopIndex - 1;
-    this->settings.stopIndex = max(0, next);
+    int next = this->printStopPositionBuffer - 1;
+    this->printStopPositionBuffer = max(0, next);
+    this->settings.stopIndex = this->printStopPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
   default:
@@ -191,11 +196,17 @@ bool Runtime::changedMem() {
         this->memory->write(slot, &this->settings);
       } else {
         this->memory->read(slot, &this->settings);
+        this->afterRead();
       }
       return true;
     }
   }
   return false;
+}
+
+void Runtime::afterRead() {
+  this->printStopPositionBuffer = (this->settings.stopIndex * POSITION_BUFFER_SIZE) + (POSITION_BUFFER_SIZE / 2);
+  this->stepIntervalPositionBuffer = (this->settings.stepIntervalIndex * POSITION_BUFFER_SIZE) + (POSITION_BUFFER_SIZE / 2);
 }
 
 void Runtime::runningTimer() {
@@ -210,13 +221,19 @@ void Runtime::runningTimer() {
     this->output->setTime(this->times[this->currentTime]);
     this->start = 0;
     this->nextClick = 0;
-    if (this->lastMode == Test) {
+    if (this->currentTime == 0) {
+      this->reset();
+    } else if (this->lastMode == Test) {
       this->output->setPrintStopLed(this->currentTime);
     }
   } else {
     unsigned long remaining = this->times[this->currentTime] - elapsed;
     this->output->setTime(remaining);
-    if (this->nextClick != 0 && now > this->nextClick) {
+    if (this->input->isPressed(Start)) {
+      this->times[this->currentTime] = remaining;
+      this->start = 0;
+      this->output->setEnlarger(false);
+    } else if (this->nextClick != 0 && now > this->nextClick) {
       this->output->click();
       this->nextClick = now + 5000;
     }
