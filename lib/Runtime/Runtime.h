@@ -11,6 +11,7 @@ class Runtime {
 public:
   void begin();
   void step();
+  void scanI2C();
 private:
   void reset();
   bool changedBaseTime();

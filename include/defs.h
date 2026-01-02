@@ -1,5 +1,6 @@
 // #define TEST_MODE
-#define ENABLE_EEPROM_MEMORY
+// #define ENABLE_EEPROM_MEMORY
+#define SCAN_I2C
 
 #define INPUT_ADDR 0x20
 #define OUTPUT_ADDR 0x21
