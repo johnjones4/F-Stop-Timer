@@ -66,7 +66,7 @@ void OutputManager::step() {
 
 void OutputManager::click() {
   this->mcp->digitalWrite(BUZZER_PIN, HIGH);
-  this->nextBuzzerOff = millis() + 20;
+  this->nextBuzzerOff = millis() + 50;
 }
 
 void OutputManager::setStepIntervalLed(int n) {

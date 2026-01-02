@@ -3,7 +3,8 @@
 
 const int modePins[N_MODES] = MODE_PINS;
 const int dialPins[N_DIALS][2] = DIAL_PINS;
-const int buttonPins[N_BUTTONS] = BUTTON_PINS;
+const uint8_t buttonPins[N_BUTTONS] = BUTTON_PINS;
+const uint8_t activeStates[N_BUTTONS] = BUTTON_ACTIVE_STATES;
 
 InputManager::InputManager(int address) {
   this->address = address;
@@ -18,7 +19,7 @@ bool InputManager::begin() {
   }
 
   for (int i = 0; i < N_BUTTONS; i++) {
-    this->buttons[i] = new Button(this->mcp, buttonPins[i]);
+    this->buttons[i] = new Button(this->mcp, buttonPins[i], activeStates[i]);
   }
 
   for (int i = 0; i < N_DIALS; i++) {

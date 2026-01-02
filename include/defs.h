@@ -1,5 +1,5 @@
 // #define TEST_MODE
-// #define ENABLE_EEPROM_MEMORY
+#define ENABLE_EEPROM_MEMORY
 
 #define INPUT_ADDR 0x20
 #define OUTPUT_ADDR 0x21
@@ -25,4 +25,6 @@
 #define DIAL_PINS {{9,8},{11,10},{13,12}}
 #define BUTTON_PINS {1, 2, 3, 4, 5, 6}
 
-#define POSITION_BUFFER_SIZE 1000
+#define POSITION_BUFFER_SIZE 2
+
+#define BUTTON_ACTIVE_STATES {LOW, LOW, LOW, LOW, HIGH, HIGH}

@@ -11,6 +11,7 @@ unsigned long generateTime(unsigned long baseTime, double stepInterval, int nSto
 
 void Runtime::begin() {
   Serial.begin(9600);
+  delay(5000);
   Wire.begin();
 
   this->input = new InputManager(INPUT_ADDR);
@@ -35,6 +36,8 @@ void Runtime::begin() {
   this->reset();
 #endif
   Serial.println("Ready");
+  this->output->click();
+  // while (1) {}
 }
 
 void Runtime::step() {
@@ -233,9 +236,10 @@ void Runtime::runningTimer() {
       this->times[this->currentTime] = remaining;
       this->start = 0;
       this->output->setEnlarger(false);
-    } else if (this->nextClick != 0 && now > this->nextClick) {
+    }
+    if (now > this->nextClick) {
       this->output->click();
-      this->nextClick = now + 5000;
+      this->nextClick = now + 1000;
     }
   }
 }
