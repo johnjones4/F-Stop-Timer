@@ -41,7 +41,6 @@ void Runtime::begin() {
 #endif
   Serial.println("Ready");
   this->output->click();
-  // while (1) {}
 }
 
 void Runtime::step() {
@@ -74,7 +73,9 @@ void Runtime::step() {
   } else if (this->input->isPressed(Start)) {
     this->start = millis();
     this->output->setEnlarger(true);
-    memcpy(this->lastTimes, this->times, sizeof(unsigned long) * N_STOPS);
+    for (int i = 0; i < N_STOPS; i++) {
+      this->lastTimes[i] = generateTime(this->settings.baseTime, stepIntervals[this->settings.stepIntervalIndex], stops[i]);
+    }
     this->lastTimesSet = true;
     this->runningTimer();
   } else if (this->changedBaseTime() || this->changedStepInterval() || this->changedPrintStop()) {
