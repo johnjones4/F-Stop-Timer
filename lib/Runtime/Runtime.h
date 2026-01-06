@@ -20,12 +20,15 @@ private:
   bool changedMem();
   void runningTimer();
   void afterRead();
+  int getLastTimeStop();
   InputManager* input;
   OutputManager* output;
   Memory* memory;
   Settings settings;
   Mode lastMode;
   unsigned long times[N_STOPS];
+  unsigned long lastTimes[N_STOPS];
+  bool lastTimesSet = false;
   int nTimes = 1;
   int currentTime = 0;
   unsigned long start = 0;

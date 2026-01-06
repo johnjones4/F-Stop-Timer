@@ -74,6 +74,8 @@ void Runtime::step() {
   } else if (this->input->isPressed(Start)) {
     this->start = millis();
     this->output->setEnlarger(true);
+    memcpy(this->lastTimes, this->times, sizeof(unsigned long) * N_STOPS);
+    this->lastTimesSet = true;
     this->runningTimer();
   } else if (this->changedBaseTime() || this->changedStepInterval() || this->changedPrintStop()) {
     this->reset();
@@ -104,10 +106,10 @@ void Runtime::reset() {
   case Test:
     this->output->setEnlarger(false);
     this->output->setStepIntervalLed(this->settings.stepIntervalIndex);
-    this->output->setPrintStopLed(0);
     generateTimes(this->times, N_STOPS, this->settings.baseTime, stepIntervals[this->settings.stepIntervalIndex]);
     this->nTimes = N_STOPS;
     this->output->setTime(this->settings.baseTime);
+    this->output->setPrintStopLed(this->getLastTimeStop());
     this->memory->write(0, &this->settings);
     break;
   case Print:
@@ -307,4 +309,18 @@ void Runtime::scanI2C() {
     Serial.println("No I2C devices found\n");
   else
     Serial.println("done\n");
+}
+
+int Runtime::getLastTimeStop() {
+  if (!this->lastTimesSet) {
+    return 0;
+  }
+  unsigned long bt = this->settings.baseTime / 1000ul;
+  for (int i = 0; i < N_STOPS; i++) {
+    unsigned long t = this->lastTimes[i] / 1000ul;
+    if (t == bt) {
+      return i;
+    }
+  }
+  return 0;
 }
