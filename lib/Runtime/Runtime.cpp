@@ -12,7 +12,6 @@ unsigned long generateTime(unsigned long baseTime, double stepInterval, int nSto
 
 void Runtime::begin() {
   Serial.begin(9600);
-  delay(5000);
   Wire.begin();
 
 #ifdef SCAN_I2C
