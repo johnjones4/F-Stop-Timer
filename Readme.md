@@ -1,6 +1,6 @@
 # ΔStop 100 F-Stop Timer Source Code
 
-This is the source code to the firmware powering the ΔStop 100 F-Stop timer. It is provided as-is under the terms of the MIT license.
+This is the source code to the firmware powering the ΔStop 100 F-Stop timer. It is provided as-is under the terms of the MIT license. For more, visit: https://delta100.johnjonesfour.com/
 
 ![](https://delta100.johnjonesfour.com/IMG_0325.png)
 
