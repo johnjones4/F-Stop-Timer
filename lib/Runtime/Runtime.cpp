@@ -15,7 +15,10 @@ void Runtime::begin() {
   Wire.begin();
 
 #ifdef SCAN_I2C
-  this->scanI2C();
+  while (true) {
+    this->scanI2C();
+    delay(1000);
+  }
 #endif
 
   this->input = new InputManager(INPUT_ADDR);
@@ -239,6 +242,7 @@ void Runtime::runningTimer() {
   } else {
     unsigned long remaining = this->times[this->currentTime] - elapsed;
     this->output->setTime(remaining);
+    this->output->setPrintStopLed(this->currentTime);
     if (this->input->isPressed(Start)) {
       this->times[this->currentTime] = remaining;
       this->start = 0;
@@ -314,7 +318,7 @@ void Runtime::scanI2C() {
 
 int Runtime::getLastTimeStop() {
   if (!this->lastTimesSet) {
-    return 0;
+    return 3;
   }
   unsigned long bt = this->settings.baseTime / 1000ul;
   for (int i = 0; i < N_STOPS; i++) {
@@ -323,5 +327,5 @@ int Runtime::getLastTimeStop() {
       return i;
     }
   }
-  return 0;
+  return -1;
 }
