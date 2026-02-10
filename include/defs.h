@@ -1,6 +1,6 @@
 // #define TEST_MODE
 // #define ENABLE_EEPROM_MEMORY
-#define SCAN_I2C
+// #define SCAN_I2C
 
 #define INPUT_ADDR 0x20
 #define OUTPUT_ADDR 0x21
@@ -18,7 +18,7 @@
 
 #define MAGIC_NUMBER 1989
 
-#define STEP_INTERVALS {0.125, 0.25, 0.33, .5}
+#define STEP_INTERVALS {0.125, 0.25, 0.33, 0.5}
 #define STOPS {-3, -2, -1, 0, 1, 2, 3}
 #define MODE_PINS {14, 15, 0}
 #define STEP_INTERVAL_PINS {8, 9, 10, 11}
