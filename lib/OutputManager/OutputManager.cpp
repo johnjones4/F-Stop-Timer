@@ -37,24 +37,31 @@ OutputManager::OutputManager(int address) {
   this->address = address;
 }
 
-bool OutputManager::begin() {
+int OutputManager::begin() {
+  this->lc = new LedControl(MOSI, SCK, DISPLAY_CS_PIN, 1);
+  this->lc->shutdown(0, false);
+  this->lc->setIntensity(0, 8);
+  this->lc->clearDisplay(0);
+
   this->mcp = new Adafruit_MCP23X17();
   Serial.println("Starting output MCP");
-  //MCP23XXX_ADDR
   if (!this->mcp->begin_I2C(this->address)) {
-    Serial.println("Failed to start input MCP");
-    return false;
+    Serial.println("Failed to start output MCP");
+    return STATUS_OUTPUT_MCP_FAILED;
   }
   this->mcp->pinMode(ENLARGER_PIN, OUTPUT);
   this->mcp->pinMode(BUZZER_PIN, OUTPUT);
 
   this->stepInterval = new LedSequence(this->mcp, stepIntervalPins, N_STEP_INTERVALS);
   this->printStop = new LedSequence(this->mcp, printStopPins, N_STOPS);
-  this->lc = new LedControl(MOSI, SCK, DISPLAY_CS_PIN, 1);
-  this->lc->shutdown(0,false);
-  this->lc->setIntensity(0,8);
+  return STATUS_OK;
+}
+
+void OutputManager::displayStatus(int code) {
   this->lc->clearDisplay(0);
-  return true;
+  this->lc->setChar(0, 0, 'E', false);
+  this->lc->setChar(0, 1, '-', false);
+  this->lc->setDigit(0, 2, (byte)(code % 10), false);
 }
 
 void OutputManager::step() {

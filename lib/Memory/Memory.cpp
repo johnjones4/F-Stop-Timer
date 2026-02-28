@@ -5,18 +5,18 @@ Memory::Memory(int address) {
   this->address = address;
 }
 
-bool Memory::begin() {
+int Memory::begin() {
 #ifdef ENABLE_EEPROM_MEMORY
   Serial.println("Starting EEPROM");
   this->ee = new I2C_eeprom(this->address, I2C_DEVICESIZE_24LC512);
   if (!this->ee->begin()) {
-    return false;
+    return STATUS_EEPROM_BEGIN_FAILED;
   }
   if (!this->ee->isConnected()) {
-    return false;
+    return STATUS_EEPROM_NOT_CONNECTED;
   }
 #endif
-  return true;
+  return STATUS_OK;
 }
 
 void Memory::write(int slot, Settings* settings) {

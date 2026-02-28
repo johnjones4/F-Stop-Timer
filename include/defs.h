@@ -2,6 +2,13 @@
 // #define ENABLE_EEPROM_MEMORY
 // #define SCAN_I2C
 
+// Status codes (0 = OK, nonzero = error)
+#define STATUS_OK                   0
+#define STATUS_INPUT_MCP_FAILED     1
+#define STATUS_OUTPUT_MCP_FAILED    2
+#define STATUS_EEPROM_BEGIN_FAILED  3
+#define STATUS_EEPROM_NOT_CONNECTED 4
+
 #define INPUT_ADDR 0x20
 #define OUTPUT_ADDR 0x21
 #define EEPROM_ADDR 0x50

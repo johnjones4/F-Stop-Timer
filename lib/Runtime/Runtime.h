@@ -9,7 +9,7 @@
 
 class Runtime {
 public:
-  void begin();
+  int begin();
   void step();
   void scanI2C();
 private:

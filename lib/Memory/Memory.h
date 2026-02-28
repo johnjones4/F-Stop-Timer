@@ -14,7 +14,7 @@ typedef struct {
 class Memory {
 public:
   Memory(int address);
-  bool begin();
+  int begin();
   void write(int slot, Settings* settings);
   void read(int slot, Settings* settings);
 private:

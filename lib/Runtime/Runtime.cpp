@@ -10,7 +10,7 @@ const int stops[N_STOPS] = STOPS;
 int generateTimes(unsigned long *times, int nTimes, unsigned long baseTime, double stepInterval);
 unsigned long generateTime(unsigned long baseTime, double stepInterval, int nStops);
 
-void Runtime::begin() {
+int Runtime::begin() {
   Serial.begin(9600);
   Wire.begin();
 
@@ -21,19 +21,31 @@ void Runtime::begin() {
   }
 #endif
 
-  this->input = new InputManager(INPUT_ADDR);
+  // Output is initialized first so lc is available to display status codes.
   this->output = new OutputManager(OUTPUT_ADDR);
+  this->input = new InputManager(INPUT_ADDR);
   this->memory = new Memory(EEPROM_ADDR);
 
-  if (!this->input->begin()) {
+  int status;
+
+  status = this->output->begin();
+  if (status != STATUS_OK) {
+    this->output->displayStatus(status);
     while (true) {}
   }
-  if (!this->output->begin()) {
+
+  status = this->input->begin();
+  if (status != STATUS_OK) {
+    this->output->displayStatus(status);
     while (true) {}
   }
-  if (!this->memory->begin()) {
+
+  status = this->memory->begin();
+  if (status != STATUS_OK) {
+    this->output->displayStatus(status);
     while (true) {}
   }
+
 #ifdef TEST_MODE
   this->start = 30000;
 #else
@@ -44,6 +56,7 @@ void Runtime::begin() {
 #endif
   Serial.println("Ready");
   this->output->click();
+  return STATUS_OK;
 }
 
 void Runtime::step() {

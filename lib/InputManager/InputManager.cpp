@@ -10,12 +10,12 @@ InputManager::InputManager(int address) {
   this->address = address;
 }
 
-bool InputManager::begin() {
+int InputManager::begin() {
   this->mcp = new Adafruit_MCP23X17();
   Serial.println("Starting input MCP");
   if (!this->mcp->begin_I2C(this->address)) {
     Serial.println("Failed to start input MCP");
-    return false;
+    return STATUS_INPUT_MCP_FAILED;
   }
 
   for (int i = 0; i < N_BUTTONS; i++) {
@@ -28,7 +28,7 @@ bool InputManager::begin() {
 
   this->modeSelector = new Selector(this->mcp, modePins, N_MODES);
 
-  return true;
+  return STATUS_OK;
 }
 
 void InputManager::step() {
