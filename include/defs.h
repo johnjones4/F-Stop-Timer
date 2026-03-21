@@ -1,5 +1,5 @@
 // #define TEST_MODE
-// #define ENABLE_EEPROM_MEMORY
+#define ENABLE_EEPROM_MEMORY
 // #define SCAN_I2C
 
 // Status codes (0 = OK, nonzero = error)
@@ -35,4 +35,4 @@
 
 #define POSITION_BUFFER_SIZE 2
 
-#define BUTTON_ACTIVE_STATES {LOW, LOW, LOW, LOW, HIGH, HIGH}
+#define BUTTON_ACTIVE_STATES {LOW, LOW, LOW, LOW, LOW, LOW}

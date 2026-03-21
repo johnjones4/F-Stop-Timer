@@ -55,6 +55,16 @@ int Runtime::begin() {
   this->reset();
 #endif
   Serial.println("Ready");
+  for (int i = 0; i < N_STEP_INTERVALS; i++) {
+    this->output->setStepIntervalLed(i);
+    delay(100);
+  }
+  this->output->setStepIntervalLed(-1);
+  for (int i = 0; i < N_STOPS; i++) {
+    this->output->setPrintStopLed(i);
+    delay(100);
+  }
+  this->output->setPrintStopLed(-1);
   this->output->click();
   return STATUS_OK;
 }
