@@ -7,7 +7,8 @@
 class OutputManager {
 public:
   OutputManager(int address);
-  bool begin();
+  int begin();
+  void displayStatus(int code);
   void setStepIntervalLed(int n);
   void setPrintStopLed(int n);
   void setTime(unsigned long t);

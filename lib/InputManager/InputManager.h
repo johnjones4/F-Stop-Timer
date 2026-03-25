@@ -34,7 +34,7 @@ typedef enum {
 class InputManager {
 public:
   InputManager(int address);
-  bool begin();
+  int begin();
   void step();
   bool isPressed(ButtonName b);
   RotaryEncoder::Direction getDialDirection(DialName d);
