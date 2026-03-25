@@ -94,6 +94,7 @@ void Runtime::step() {
   } else if (this->changedBaseTime() || this->changedStepInterval() || this->changedPrintStop()) {
     this->reset();
   } else if (this->input->isPressed(MemSet)) {
+    Serial.println("mem set");
     this->reset();
     this->writeMode = true;
   }
