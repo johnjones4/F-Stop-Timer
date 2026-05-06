@@ -184,7 +184,7 @@ bool Runtime::changedStepInterval() {
   switch (bt) {
   case RotaryEncoder::Direction::CLOCKWISE: {
     int next = this->stepIntervalPositionBuffer + 1;
-    this->stepIntervalPositionBuffer = min(N_STEP_INTERVALS * POSITION_BUFFER_SIZE, next);
+    this->stepIntervalPositionBuffer = min(N_STEP_INTERVALS * POSITION_BUFFER_SIZE - 1, next);
     this->settings.stepIntervalIndex = this->stepIntervalPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
@@ -207,7 +207,7 @@ bool Runtime::changedPrintStop() {
   switch (bt) {
   case RotaryEncoder::Direction::CLOCKWISE: {
     int next = this->printStopPositionBuffer + 1;
-    this->printStopPositionBuffer = min(N_STOPS * POSITION_BUFFER_SIZE, next);
+    this->printStopPositionBuffer = min(N_STOPS * POSITION_BUFFER_SIZE - 1, next);
     this->settings.stopIndex = this->printStopPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
