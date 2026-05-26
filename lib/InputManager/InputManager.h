@@ -2,44 +2,22 @@
 #define InputManager_h
 
 #include <Arduino.h>
+#include <IInputManager.h>
 #include <Button.h>
 #include <Adafruit_MCP23X17.h>
 #include <RotaryEncoder.h>
 #include <Selector.h>
 #include <../../include/defs.h>
 
-typedef enum {
-  Reset   = 0,
-  MemSet  = 1,
-  Mem1    = 2,
-  Mem2    = 3,
-  Mem3    = 4,
-  Start   = 5,
-} ButtonName;
-
-typedef enum {
-  BaseTime      = 0,
-  StepInterval  = 1,
-  PrintStop     = 2,
-} DialName;
-
-
-typedef enum {
-  Focus = 0,
-  Test  = 1,
-  Print = 2,
-  None = 3,
-} Mode;
-
-class InputManager {
+class InputManager : public IInputManager {
 public:
   InputManager(int address);
-  int begin();
-  void step();
-  bool isPressed(ButtonName b);
-  RotaryEncoder::Direction getDialDirection(DialName d);
-  unsigned long getDialSpeed(DialName d);
-  Mode getSelectedMode();
+  int begin() override;
+  void step() override;
+  bool isPressed(ButtonName b) override;
+  DialDirection getDialDirection(DialName d) override;
+  unsigned long getDialSpeed(DialName d) override;
+  Mode getSelectedMode() override;
 private:
   int address;
   Adafruit_MCP23X17* mcp;

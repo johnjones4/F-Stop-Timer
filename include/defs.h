@@ -1,5 +1,7 @@
 // #define TEST_MODE
+#ifndef WASM_BUILD
 #define ENABLE_EEPROM_MEMORY
+#endif
 // #define SCAN_I2C
 
 // Status codes (0 = OK, nonzero = error)

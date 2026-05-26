@@ -1,5 +1,8 @@
 #include <Memory.h>
 #include <../../include/defs.h>
+#ifdef WASM_BUILD
+#include <cstring>
+#endif 
 
 Memory::Memory(int address) {
   this->address = address;

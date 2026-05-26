@@ -44,11 +44,15 @@ bool InputManager::isPressed(ButtonName b) {
   return this->buttons[b]->isPressed();
 }
 
-RotaryEncoder::Direction InputManager::getDialDirection(DialName d) {
-  if (d < 0 || d >= N_BUTTONS) {
-    return RotaryEncoder::Direction::NOROTATION;
+DialDirection InputManager::getDialDirection(DialName d) {
+  if (d < 0 || d >= N_DIALS) {
+    return DialDirection::NONE;
   }
-  return this->encoders[d]->getDirection();
+  switch (this->encoders[d]->getDirection()) {
+    case RotaryEncoder::Direction::CLOCKWISE:        return DialDirection::CLOCKWISE;
+    case RotaryEncoder::Direction::COUNTERCLOCKWISE: return DialDirection::COUNTERCLOCKWISE;
+    default:                                         return DialDirection::NONE;
+  }
 }
 
 unsigned long InputManager::getDialSpeed(DialName d) {

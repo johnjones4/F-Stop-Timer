@@ -1,16 +1,23 @@
 #include <Runtime.h>
-#include <Wire.h>
 #include <Arduino.h>
 #include <../../include/defs.h>
-#include <Wire.h>
 #include <fstop.h>
+
+#ifndef WASM_BUILD
+#include <Wire.h>
+#include <InputManager.h>
+#include <OutputManager.h>
+#endif
 
 const double stepIntervals[N_STEP_INTERVALS] = STEP_INTERVALS;
 const int stops[N_STOPS] = STOPS;
 
-int Runtime::begin() {
+int Runtime::begin(IInputManager* inMgr, IOutputManager* outMgr) {
   Serial.begin(9600);
+
+#ifndef WASM_BUILD
   Wire.begin();
+#endif
 
 #ifdef SCAN_I2C
   while (true) {
@@ -19,9 +26,17 @@ int Runtime::begin() {
   }
 #endif
 
-  // Output is initialized first so lc is available to display status codes.
-  this->output = new OutputManager(OUTPUT_ADDR);
-  this->input = new InputManager(INPUT_ADDR);
+  if (inMgr != nullptr) {
+    this->output = outMgr;
+    this->input = inMgr;
+  } else {
+#ifndef WASM_BUILD
+    // Output is initialized first so lc is available to display status codes.
+    this->output = new OutputManager(OUTPUT_ADDR);
+    this->input = new InputManager(INPUT_ADDR);
+#endif
+  }
+
   this->memory = new Memory(EEPROM_ADDR);
 
   int status;
@@ -76,13 +91,13 @@ void Runtime::step() {
   this->output->setPrintStopLed((now / 1000) % N_STOPS);
   this->output->setStepIntervalLed((now / 1000) % N_STEP_INTERVALS);
   this->output->setEnlarger(now / 1000 % 2);
-  Direction bt = this->input->getDialDirection(BaseTime);
+  DialDirection bt = this->input->getDialDirection(BaseTime);
   switch (bt) {
-  case CLOCKWISE: {
+  case DialDirection::CLOCKWISE: {
     this->start += 500;
     break;
   }
-  case COUNTERCLOCKWISE: {
+  case DialDirection::COUNTERCLOCKWISE: {
     this->start -= 500;
     break;
   }
@@ -138,7 +153,7 @@ void Runtime::reset() {
     this->output->setPrintStopLed(this->getLastTimeStop());
     this->memory->write(0, &this->settings);
     break;
-  case Print:
+  case PrintMode:
     this->output->setEnlarger(false);
     this->output->setStepIntervalLed(this->settings.stepIntervalIndex);
     this->output->setPrintStopLed(this->settings.stopIndex);
@@ -147,6 +162,8 @@ void Runtime::reset() {
     this->output->setTime(this->times[this->currentTime]);
     this->memory->write(0, &this->settings);
     break;
+  default:
+    break;
   }
 }
 
@@ -154,21 +171,21 @@ bool Runtime::changedBaseTime() {
   if (this->lastMode == Focus) {
     return false;
   }
-  RotaryEncoder::Direction bt = this->input->getDialDirection(BaseTime);
+  DialDirection bt = this->input->getDialDirection(BaseTime);
   unsigned long speed = this->input->getDialSpeed(BaseTime);
   unsigned long inc = speed * 10;
   switch (bt) {
-  case RotaryEncoder::Direction::CLOCKWISE: {
+  case DialDirection::CLOCKWISE: {
     unsigned long next = this->settings.baseTime + inc;
-    this->settings.baseTime = min(99500, next);
+    this->settings.baseTime = min(99500UL, next);
     return true;
   }
-  case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
+  case DialDirection::COUNTERCLOCKWISE: {
     if (inc > this->settings.baseTime) {
       this->settings.baseTime = 0;
     } else {
       this->settings.baseTime = this->settings.baseTime - inc;
-    }    
+    }
     return true;
   }
   default:
@@ -180,15 +197,15 @@ bool Runtime::changedStepInterval() {
   if (this->lastMode == Focus) {
     return false;
   }
-  RotaryEncoder::Direction bt = this->input->getDialDirection(StepInterval);
+  DialDirection bt = this->input->getDialDirection(StepInterval);
   switch (bt) {
-  case RotaryEncoder::Direction::CLOCKWISE: {
+  case DialDirection::CLOCKWISE: {
     int next = this->stepIntervalPositionBuffer + 1;
     this->stepIntervalPositionBuffer = min(N_STEP_INTERVALS * POSITION_BUFFER_SIZE - 1, next);
     this->settings.stepIntervalIndex = this->stepIntervalPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
-  case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
+  case DialDirection::COUNTERCLOCKWISE: {
     int next = this->stepIntervalPositionBuffer - 1;
     this->stepIntervalPositionBuffer = max(0, next);
     this->settings.stepIntervalIndex = this->stepIntervalPositionBuffer / POSITION_BUFFER_SIZE;
@@ -200,18 +217,18 @@ bool Runtime::changedStepInterval() {
 }
 
 bool Runtime::changedPrintStop() {
-  if (this->lastMode != Print) {
+  if (this->lastMode != PrintMode) {
     return false;
   }
-  RotaryEncoder::Direction bt = this->input->getDialDirection(PrintStop);
+  DialDirection bt = this->input->getDialDirection(PrintStop);
   switch (bt) {
-  case RotaryEncoder::Direction::CLOCKWISE: {
+  case DialDirection::CLOCKWISE: {
     int next = this->printStopPositionBuffer + 1;
     this->printStopPositionBuffer = min(N_STOPS * POSITION_BUFFER_SIZE - 1, next);
     this->settings.stopIndex = this->printStopPositionBuffer / POSITION_BUFFER_SIZE;
     return true;
   }
-  case RotaryEncoder::Direction::COUNTERCLOCKWISE: {
+  case DialDirection::COUNTERCLOCKWISE: {
     int next = this->printStopPositionBuffer - 1;
     this->printStopPositionBuffer = max(0, next);
     this->settings.stopIndex = this->printStopPositionBuffer / POSITION_BUFFER_SIZE;
@@ -278,7 +295,8 @@ void Runtime::runningTimer() {
 }
 
 void Runtime::scanI2C() {
-   byte error, address;
+#ifndef WASM_BUILD
+  byte error, address;
   int nDevices;
 
   Serial.println("Scanning...");
@@ -286,9 +304,6 @@ void Runtime::scanI2C() {
   nDevices = 0;
   for(address = 1; address < 127; address++ )
   {
-    // The i2c_scanner uses the return value of
-    // the Write.endTransmisstion to see if
-    // a device did acknowledge to the address.
     Wire.beginTransmission(address);
     error = Wire.endTransmission();
 
@@ -314,6 +329,7 @@ void Runtime::scanI2C() {
     Serial.println("No I2C devices found\n");
   else
     Serial.println("done\n");
+#endif
 }
 
 int Runtime::getLastTimeStop() {
