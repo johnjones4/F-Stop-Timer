@@ -1,8 +1,10 @@
 #ifndef Memory_h
 #define Memory_h
 
-#include <I2C_eeprom.h>
 #include <../../include/defs.h>
+#ifdef ENABLE_EEPROM_MEMORY
+#include <I2C_eeprom.h>
+#endif
 
 typedef struct {
   int magicNumber;

@@ -1,15 +1,15 @@
 #ifndef Runtime_h
 #define Runtime_h
 
-#include <InputManager.h>
-#include <OutputManager.h>
+#include <IInputManager.h>
+#include <IOutputManager.h>
 #include <Memory.h>
 
 #define N_STOPS 7
 
 class Runtime {
 public:
-  int begin();
+  int begin(IInputManager* input = nullptr, IOutputManager* output = nullptr);
   void step();
   void scanI2C();
 private:
@@ -21,8 +21,8 @@ private:
   void runningTimer();
   void afterRead();
   int getLastTimeStop();
-  InputManager* input;
-  OutputManager* output;
+  IInputManager* input;
+  IOutputManager* output;
   Memory* memory;
   Settings settings;
   Mode lastMode;

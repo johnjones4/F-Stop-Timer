@@ -1,0 +1,3 @@
+/mnt/c/Users/johnj/Developer/F-Stop-Timer/web/build/CMakeFiles/fstop_web.dir
+/mnt/c/Users/johnj/Developer/F-Stop-Timer/web/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/johnj/Developer/F-Stop-Timer/web/build/CMakeFiles/rebuild_cache.dir

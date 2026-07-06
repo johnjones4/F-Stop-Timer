@@ -1,0 +1,1 @@
+/usr/bin/em++ "-sEXPORTED_RUNTIME_METHODS=['ccall','cwrap']" "-sEXPORTED_FUNCTIONS=['_main','_web_button_press','_web_dial_turn','_web_mode_select']" -sMODULARIZE=1 -sEXPORT_NAME=FStopModule -sALLOW_MEMORY_GROWTH=1 -lm @CMakeFiles/fstop_web.dir/objects1 -o fstop_web.js 
